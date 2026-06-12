@@ -111,11 +111,37 @@ const isActive = (href: string) =>
         class="site-header sticky top-0 z-20 -mx-5 border-b border-stone-200/80 px-5 backdrop-blur"
         transition:animate="none"
       >
-        <nav class="flex items-center justify-between py-4 font-mono text-sm">
+        <nav class="flex flex-wrap items-center py-3 font-mono text-sm sm:flex-nowrap sm:py-4">
           <a href={localizePath(lang, '/')} class="font-semibold text-stone-900 transition-colors hover:text-amber-600"
             >~/mikegabyte</a
           >
-          <div class="flex items-center gap-3 sm:gap-5">
+          <!-- mobile: lang switcher sits top-right next to the logo;
+               desktop: it moves to the very end, after the links -->
+          <span class="ml-auto flex items-center gap-1 text-xs sm:order-last sm:ml-0 sm:border-l sm:border-stone-200 sm:pl-4">
+            <a
+              href={viPath}
+              data-set-lang="vi"
+              class:list={[
+                'transition-colors hover:text-amber-700',
+                lang === 'vi' ? 'font-semibold text-amber-700' : 'text-stone-400',
+              ]}
+              aria-label="Tiếng Việt">vi</a
+            >
+            <span class="text-stone-300">/</span>
+            <a
+              href={enPath}
+              data-set-lang="en"
+              class:list={[
+                'transition-colors hover:text-amber-700',
+                lang === 'en' ? 'font-semibold text-amber-700' : 'text-stone-400',
+              ]}
+              aria-label="English">en</a
+            >
+          </span>
+          <!-- mobile: links wrap onto their own full-width row; desktop: inline on the right -->
+          <div
+            class="mt-2.5 flex w-full flex-wrap items-center justify-between gap-x-3 gap-y-1 text-xs sm:ml-auto sm:mt-0 sm:w-auto sm:justify-start sm:gap-5 sm:text-sm"
+          >
             {
               nav.map((item) => (
                 <a
@@ -132,31 +158,10 @@ const isActive = (href: string) =>
             }
             <a
               href="/cv.pdf"
-              class="rounded border border-amber-500/50 px-2 py-1 text-amber-700 transition-colors hover:bg-amber-400 hover:text-stone-900"
+              class="rounded border border-amber-500/50 px-2 py-0.5 text-amber-700 transition-colors hover:bg-amber-400 hover:text-stone-900 sm:py-1"
             >
               {tt.nav.cv}
             </a>
-            <span class="flex items-center gap-1 border-l border-stone-200 pl-3 text-xs sm:pl-4">
-              <a
-                href={viPath}
-                data-set-lang="vi"
-                class:list={[
-                  'transition-colors hover:text-amber-700',
-                  lang === 'vi' ? 'font-semibold text-amber-700' : 'text-stone-400',
-                ]}
-                aria-label="Tiếng Việt">vi</a
-              >
-              <span class="text-stone-300">/</span>
-              <a
-                href={enPath}
-                data-set-lang="en"
-                class:list={[
-                  'transition-colors hover:text-amber-700',
-                  lang === 'en' ? 'font-semibold text-amber-700' : 'text-stone-400',
-                ]}
-                aria-label="English">en</a
-              >
-            </span>
           </div>
         </nav>
       </header>

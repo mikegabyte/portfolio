@@ -190,7 +190,19 @@ const chapterEmojis: Record<string, string> = {
         <p class="mt-3 max-w-xl leading-relaxed text-stone-600" data-reveal>
           {tl.tour.text}
         </p>
-        <div class="mt-20 max-w-xl" data-reveal>
+        <div class="relative mt-20 max-w-xl" data-reveal>
+          <!-- mobile fallback for the desktop-only 3D car: the chapter's bus
+               drives the road Đà Nẵng → Hội An as you scroll -->
+          <div
+            class="road-bus absolute -top-8 left-0 z-[1]"
+            data-road-bus
+            aria-hidden="true"
+          >
+            <span
+              class="road-bus-body flex h-8 w-8 items-center justify-center rounded-full border-2 border-amber-500 bg-amber-100 text-base shadow-md"
+              data-road-bus-body>🚌</span
+            >
+          </div>
           <div class="border-t-2 border-dashed border-stone-300" data-road>
           </div>
           <div
@@ -363,6 +375,11 @@ const chapterEmojis: Record<string, string> = {
   import { splitChars } from "../../scripts/split-text";
 
   const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  // The 3D car is desktop-only: on phones it costs more in jank than it adds
+  // in delight, so neither three.js nor the path math should run there.
+  const wantCar = window.matchMedia(
+    "(min-width: 768px) and (pointer: fine)",
+  ).matches;
 
   let scrollHandler: (() => void) | null = null;
 
@@ -656,7 +673,15 @@ const chapterEmojis: Record<string, string> = {
     const progress = root.querySelector<HTMLElement>("[data-tl-progress]");
     const road = root.querySelector<HTMLElement>("[data-road]");
     const bellBtn = root.querySelector<HTMLElement>("[data-bell]");
-    const car = root.querySelector<HTMLElement>("[data-car]");
+    // No car wanted (mobile): leave it null so the whole path/transform
+    // branch of the scroll handler is skipped, not just the canvas.
+    const car = wantCar ? root.querySelector<HTMLElement>("[data-car]") : null;
+    // ...and in its place, an emoji bus drives the Đà Nẵng → Hội An road.
+    const roadBus = wantCar
+      ? null
+      : root.querySelector<HTMLElement>("[data-road-bus]");
+    const roadBusBody =
+      roadBus?.querySelector<HTMLElement>("[data-road-bus-body]") ?? null;
     const heroH1 = root.querySelector<HTMLElement>("h1[data-split]");
     if (!tl || !progress || reduced) return;
 
@@ -831,6 +856,10 @@ const chapterEmojis: Record<string, string> = {
       return { x: s.x0 + s.dx, y: s.y0 + s.dy, ang: s.ang };
     };
 
+    // mobile road bus: face where you're headed, lean into the motion
+    let lastBusX = -1;
+    let busSettle: ReturnType<typeof setTimeout> | undefined;
+
     let raf = 0;
     const frame = () => {
       raf = 0;
@@ -877,6 +906,27 @@ const chapterEmojis: Record<string, string> = {
         // headline before the journey starts (no flash of empty canvas)
         car.classList.toggle("tl-car-on", !!car3d);
       }
+      if (roadBus && road) {
+        // Da Nang → Hoi An while the road climbs the lower half of the
+        // screen; scrolling back up drives the bus home again.
+        const rr = road.getBoundingClientRect();
+        const pb = clamp01((vh * 0.9 - rr.top) / (vh * 0.45));
+        const x = (rr.width - 32) * pb; // 32 = badge width, park inside the verge
+        const dx = lastBusX < 0 ? 0 : x - lastBusX;
+        lastBusX = x;
+        roadBus.style.transform = `translate3d(${x.toFixed(1)}px, 0, 0)`;
+        if (roadBusBody && dx) {
+          // the emoji faces left, so heading to Hoi An means a mirror flip —
+          // and under that flip a screen-space lean of r needs rotate(s*r)
+          const s = dx > 0 ? -1 : 1;
+          const lean = Math.max(-12, Math.min(12, -dx * 1.1));
+          roadBusBody.style.transform = `scaleX(${s}) rotate(${(s * lean).toFixed(1)}deg)`;
+          clearTimeout(busSettle);
+          busSettle = setTimeout(() => {
+            roadBusBody.style.transform = `scaleX(${s}) rotate(0deg)`;
+          }, 160);
+        }
+      }
     };
     const onScroll = () => {
       if (!raf) raf = requestAnimationFrame(frame);
@@ -888,7 +938,7 @@ const chapterEmojis: Record<string, string> = {
 
     // pull in three.js only when the journey is about to start
     const canvas = car?.querySelector<HTMLCanvasElement>("[data-car-canvas]");
-    if (canvas && "WebGLRenderingContext" in window) {
+    if (canvas && wantCar && "WebGLRenderingContext" in window) {
       const io = new IntersectionObserver(
         (entries, obs) => {
           if (!entries.some((e) => e.isIntersecting) || car3dPending) return;

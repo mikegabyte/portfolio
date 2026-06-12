@@ -158,7 +158,7 @@ export const t = {
       description:
         'Dev frontend (Vue, React, TypeScript) chuyên làm công cụ web cho marketing & content. Từng là hướng dẫn viên du lịch — giờ chuyển qua dẫn người dùng đi trong giao diện.',
     },
-    nav: { home: 'trang chủ', projects: 'dự án', tour: 'chuyến tour', blog: 'blog', cv: 'cv ↓' },
+    nav: { home: 'trang chủ', projects: 'dự án', tour: 'hành trình', blog: 'blog', cv: 'cv ↓' },
     footer: {
       email: 'email',
       github: 'github',
@@ -233,10 +233,10 @@ export const t = {
         'Trộn giữa side project và công việc chuyên môn. Side project nào cũng có source trên GitHub và build log trên <a href="/blog" class="text-amber-700 underline-offset-4 hover:underline">blog</a> — kể cả những ngõ cụt.',
     },
     about: {
-      title: 'Chuyến tour — mikegabyte',
+      title: 'Hành trình — mikegabyte',
       description:
         'Tour có hướng dẫn qua con đường khác thường vào nghề phần mềm: sảnh khách sạn → xe tour → QC → frontend → martech.',
-      kicker: '// chuyến tour',
+      kicker: '// hành trình',
       heading: 'Chào mừng lên xe. Hôm nay tôi là hướng dẫn viên của bạn.',
       intro:
         'Ngày xưa tôi làm nghề này thật — dẫn khách tham quan miền Trung. Lịch trình hôm nay ngắn hơn: sáu điểm dừng kể chuyện một cậu lễ tân khách sạn trở thành người làm phần mềm như thế nào. Vui lòng giữ tay trong viewport suốt chuyến đi.',

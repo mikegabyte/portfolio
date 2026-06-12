@@ -117,6 +117,16 @@ body {
 }
 
 /* ===== 3D car riding the timeline (three.js, lazy-loaded, driven by scroll JS) ===== */
+/* Desktop-only: on phones the WebGL car costs frames without earning them.
+   The scroll script mirrors this query and skips loading three.js entirely. */
+.tl-car {
+  display: none;
+}
+@media (min-width: 768px) and (pointer: fine) {
+  .tl-car {
+    display: block;
+  }
+}
 .tl-car {
   opacity: 0;
   transition: opacity 0.35s ease;
@@ -133,6 +143,22 @@ body {
   margin-left: -100px;
   margin-top: -100px;
   pointer-events: none;
+}
+
+/* ===== Mobile stand-in for the 3D car: an emoji bus drives the
+   Đà Nẵng → Hội An road (scroll-driven, same query as the car, inverted) ===== */
+.road-bus {
+  will-change: transform;
+  pointer-events: none;
+}
+.road-bus-body {
+  transition: transform 0.3s ease;
+}
+@media (min-width: 768px) and (pointer: fine) {
+  /* desktop: the real 3D car drives this road instead */
+  .road-bus {
+    display: none;
+  }
 }
 
 /* ===== Tour route (about page): bus + stops driven by scroll JS ===== */
