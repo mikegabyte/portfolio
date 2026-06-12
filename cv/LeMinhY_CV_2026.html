@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Lê Minh Ý — Frontend Developer</title>
+<style>
+  :root {
+    --ink: #1a1a1a;
+    --muted: #555;
+    --accent: #0b5fa5;
+    --line: #d9d9d9;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { background: #fff; }
+  body {
+    font-family: "Helvetica Neue", Arial, sans-serif;
+    color: var(--ink);
+    font-size: 10.5pt;
+    line-height: 1.5;
+    max-width: 196mm;
+    margin: 0 auto;
+    padding: 14mm 12mm;
+  }
+  @page { size: A4; margin: 0; }
+
+  /* ===== Header ===== */
+  header { margin-bottom: 14px; }
+  h1 { font-size: 24pt; font-weight: 700; letter-spacing: .5px; }
+  .headline { font-size: 12pt; color: var(--accent); font-weight: 600; margin-top: 2px; }
+  .contact { margin-top: 6px; color: var(--muted); font-size: 9.5pt; }
+  /* place a separator between any consecutive contact items (span or a) */
+  .contact * + *::before { content: "  ·  "; color: #aaa; }
+  .contact a { color: var(--muted); text-decoration: none; }
+  .contact a:hover { color: var(--ink); text-decoration: underline; }
+
+  /* ===== Sections ===== */
+  section { margin-top: 14px; }
+  h2 {
+    font-size: 10.5pt; text-transform: uppercase; letter-spacing: 1.5px;
+    color: var(--accent); border-bottom: 1.5px solid var(--line);
+    padding-bottom: 3px; margin-bottom: 8px;
+  }
+
+  /* ===== Experience ===== */
+  .job { margin-bottom: 11px; page-break-inside: avoid; }
+  .job-head { display: flex; justify-content: space-between; align-items: baseline; }
+  .job-title { font-weight: 700; font-size: 11pt; }
+  .job-meta { color: var(--muted); font-size: 9.5pt; white-space: nowrap; }
+  .job-sub { color: var(--muted); font-style: italic; font-size: 9.5pt; margin-bottom: 3px; }
+  ul { padding-left: 16px; }
+  li { margin-bottom: 2.5px; }
+
+  /* ===== Skills ===== */
+  .skill-row { display: flex; margin-bottom: 4px; }
+  .skill-label { flex: 0 0 150px; font-weight: 700; }
+  .skill-val { flex: 1; }
+
+  /* ===== Education ===== */
+  .edu { margin-bottom: 8px; }
+  .edu-head { display: flex; justify-content: space-between; align-items: baseline; }
+  .edu-name { font-weight: 700; }
+  .edu-deg { color: var(--muted); font-size: 9.5pt; }
+
+  /* ===== Languages ===== */
+  .langs span + span::before { content: "  ·  "; color: #aaa; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Lê Minh Ý</h1>
+  <div class="headline">Frontend Developer — Vue.js · React · TypeScript · Marketing Technology</div>
+  <div class="contact">
+    <span>HCMC, Vietnam</span>
+    <a href="mailto:leminhy969@gmail.com">leminhy969@gmail.com</a>
+    <a href="https://github.com/mikegabyte" target="_blank" rel="noopener noreferrer">github.com/mikegabyte</a>
+    <a href="https://mikegabyte.com" target="_blank" rel="noopener noreferrer">mikegabyte.com</a>
+  </div>
+</header>
+
+<section>
+  <h2>Summary</h2>
+  <p>
+    Web developer with 6+ years of experience building products with Vue.js, React, TypeScript and
+    Node.js. Career path spans offshore product teams for EU and English-speaking markets and, most
+    recently, marketing-technology engineering — building custom WordPress plugins &amp; themes,
+    ad-serving/tracking systems and campaign automation tools. A rare combination of solid frontend
+    engineering and hands-on understanding of SEO, traffic acquisition and conversion. Self-taught
+    career-switcher: fast learner, strong ownership, focused on shipping things that move business metrics.
+  </p>
+</section>
+
+<section>
+  <h2>Experience</h2>
+
+  <div class="job">
+    <div class="job-head">
+      <div class="job-title">Web Developer — Marketing Technology</div>
+      <div class="job-meta">Nov 2024 — Present · Bangkok</div>
+    </div>
+    <div class="job-sub">Growth &amp; marketing engineering for a multi-site online business</div>
+    <ul>
+      <li>Designed and built custom WordPress plugins and themes end-to-end — REST API integration, shortcode-based rendering, and embedding Vue-built JS bundles into WordPress UIs.</li>
+      <li>Built an in-house ad server handling ad delivery, impression/click tracking and performance reporting.</li>
+      <li>Developed an internal ERP system to manage marketing campaigns, automating manual workflows for the operations team.</li>
+      <li>Worked across the full stack (Vue.js UIs, Node.js services, WordPress/PHP) with direct ownership from idea to production.</li>
+    </ul>
+  </div>
+
+  <div class="job">
+    <div class="job-head">
+      <div class="job-title">Frontend Developer</div>
+      <div class="job-meta">Oct 2023 — Oct 2024 · Vietnam</div>
+    </div>
+    <div class="job-sub">Product development for EU-market partners</div>
+    <ul>
+      <li>Collaborated closely with EU partners to translate business and user needs into tailored web solutions.</li>
+      <li>Established coding conventions, project structure and development standards adopted across the team.</li>
+      <li>Maintained code quality through active participation in code reviews and industry best practices.</li>
+    </ul>
+  </div>
+
+  <div class="job">
+    <div class="job-head">
+      <div class="job-title">Frontend Developer</div>
+      <div class="job-meta">Sep 2022 — Oct 2023 · Vietnam</div>
+    </div>
+    <div class="job-sub">Offshore development for English-speaking partners</div>
+    <ul>
+      <li>Developed web applications with React, JavaScript, HTML and CSS in an English-speaking environment.</li>
+      <li>Built and maintained reusable component libraries that improved team development speed.</li>
+      <li>Worked closely with designers and back-end developers to deliver seamless user experiences.</li>
+    </ul>
+  </div>
+
+  <div class="job">
+    <div class="job-head">
+      <div class="job-title">Frontend Developer (WordPress)</div>
+      <div class="job-meta">Nov 2019 — Sep 2022 · Vietnam</div>
+    </div>
+    <ul>
+      <li>Built landing pages combining the WordPress editor with custom HTML/CSS; built WordPress plugin UIs with ReactJS.</li>
+      <li>Customized and extended WordPress themes and plugins to meet project-specific requirements.</li>
+      <li>Provided ongoing support and maintenance for WordPress sites post-launch.</li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <h2>Skills</h2>
+  <div class="skill-row"><div class="skill-label">Frontend</div><div class="skill-val">Vue.js (primary, 2+ recent years), React, TypeScript, JavaScript (ES6+), TanStack, HTML5, CSS3, responsive UI</div></div>
+  <div class="skill-row"><div class="skill-label">Backend &amp; CMS</div><div class="skill-val">Node.js, REST APIs, WordPress plugin &amp; theme development (end-to-end)</div></div>
+  <div class="skill-row"><div class="skill-label">AI &amp; Automation</div><div class="skill-val">AI-assisted development (Claude Code — daily driver), prompt engineering, custom AI skills/plugin setup, integrating LLM APIs into dev &amp; marketing workflows</div></div>
+  <div class="skill-row"><div class="skill-label">Marketing Tech</div><div class="skill-val">SEO implementation, ad serving &amp; tracking, traffic analytics, campaign automation</div></div>
+  <div class="skill-row"><div class="skill-label">Workflow</div><div class="skill-val">Git, code review, coding conventions, working with international/remote teams</div></div>
+</section>
+
+<section>
+  <h2>Education</h2>
+  <div class="edu">
+    <div class="edu-head">
+      <div class="edu-name">University of Information Technology — HCMC</div>
+      <div class="job-meta">2021 — 2023</div>
+    </div>
+    <div class="edu-deg">Bachelor of Information Technology (remote program)</div>
+  </div>
+  <div class="edu">
+    <div class="edu-head">
+      <div class="edu-name">University of Foreign Languages Studies — Danang</div>
+      <div class="job-meta">2013 — 2018</div>
+    </div>
+    <div class="edu-deg">Bachelor of Thai Language</div>
+  </div>
+</section>
+
+<section>
+  <h2>Languages</h2>
+  <p class="langs"><span>Vietnamese (native)</span><span>English (professional working proficiency)</span><span>Thai (intermediate)</span></p>
+</section>
+
+</body>
+</html>
