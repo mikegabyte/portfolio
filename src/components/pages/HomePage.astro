@@ -1,0 +1,907 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import ProjectCard from "../ProjectCard.astro";
+import { projects } from "../../data/projects";
+import { t, localizePath, type Lang } from "../../i18n/translations";
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const tt = t[lang];
+const tl = tt.home.timeline;
+const featured = projects.filter((p) => p.featured);
+
+const chapterEmojis: Record<string, string> = {
+  projects: "💻",
+  qc: "🔍",
+  tour: "🚌",
+  hotel: "🛎️",
+  origin: "🧭",
+};
+---
+
+<Layout lang={lang}>
+  <div data-home>
+    <!-- Hero: "now" — the present-day chapter -->
+    <section class="flex min-h-[72svh] flex-col justify-center py-10">
+      <p class="font-mono text-sm text-amber-600" data-reveal>
+        {tt.home.kicker}
+      </p>
+      <h1
+        class="mt-4 text-4xl font-bold leading-tight text-stone-900 sm:text-5xl"
+        data-split
+        set:html={tt.home.titleHtml}
+      />
+      <p
+        class="mt-6 max-w-xl text-lg leading-relaxed text-stone-600"
+        data-reveal
+        data-reveal-delay="350"
+      >
+        {tt.home.intro}
+      </p>
+      <div
+        class="mt-8 flex flex-wrap gap-3"
+        data-reveal
+        data-reveal-delay="550"
+      >
+        <a
+          href="#projects"
+          class="rounded-md bg-amber-400 px-5 py-2.5 font-mono text-sm font-semibold text-stone-900 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md"
+        >
+          {tt.home.ctaProjects}
+        </a>
+        <a
+          href={localizePath(lang, "/about")}
+          class="rounded-md border border-stone-300 px-5 py-2.5 font-mono text-sm text-stone-600 transition-colors hover:border-amber-500 hover:text-amber-700"
+        >
+          {tt.home.ctaTour}
+        </a>
+      </div>
+      <p
+        class="mt-16 flex items-center gap-2 font-mono text-xs text-stone-400"
+        data-reveal
+        data-reveal-delay="900"
+      >
+        <span class="scroll-hint-arrow inline-block">⏷</span>
+        {tt.home.scrollHint}
+      </p>
+      <!-- nudge a tap now: audio autoplay needs a gesture before the car's
+           bell crash can ring out further down the page -->
+      <button
+        type="button"
+        class="sound-hint mt-3 inline-flex w-fit items-center font-mono text-xs text-amber-600/80 transition-colors hover:text-amber-700"
+        data-sound-hint
+        data-reveal
+        data-reveal-delay="1000"
+      >
+        {tt.home.soundHint}
+      </button>
+    </section>
+
+    <!-- Rewind timeline: scrolling down = travelling back in time -->
+    <div class="relative" data-timeline>
+      <div
+        class="absolute bottom-6 left-[7px] top-6 w-px bg-stone-200"
+        aria-hidden="true"
+      >
+        <div
+          class="tl-progress absolute inset-0 w-px bg-gradient-to-b from-amber-500 to-amber-300"
+          data-tl-progress
+        >
+        </div>
+        <!-- the little 3D car that drives the journey as you scroll -->
+        <div class="tl-car absolute left-0 top-0 z-0" data-car>
+          <canvas class="tl-car-canvas" data-car-canvas></canvas>
+        </div>
+      </div>
+
+      <!-- chapter 04: projects -->
+      <section id="projects" class="relative scroll-mt-24 py-12 pl-10">
+        <span
+          class="absolute left-0 top-[3.55rem] z-[1] h-[15px] w-[15px] rounded-full border-2 border-amber-500 bg-[var(--page-bg)]"
+          aria-hidden="true"></span>
+        <p
+          class="font-mono text-xs uppercase tracking-widest text-amber-600"
+          data-reveal
+        >
+          {tl.projects.label}
+        </p>
+        <h2 class="mt-2 text-2xl font-bold text-stone-900" data-reveal>
+          <span class="mr-1">{chapterEmojis.projects}</span>
+          {tl.projects.title}
+        </h2>
+        <p class="mt-3 max-w-xl leading-relaxed text-stone-600" data-reveal>
+          {tl.projects.text}
+        </p>
+        <div
+          class="mt-6 grid gap-4"
+          data-reveal-group
+          style="perspective: 1200px"
+        >
+          {
+            featured.map((project) => (
+              <div data-reveal-item>
+                <ProjectCard project={project} lang={lang} />
+              </div>
+            ))
+          }
+        </div>
+      </section>
+
+      <!-- chapter 03: the QC room -->
+      <section id="qc" class="relative scroll-mt-24 py-12 pl-10">
+        <span
+          class="absolute left-0 top-[3.55rem] z-[1] h-[15px] w-[15px] rounded-full border-2 border-amber-500 bg-[var(--page-bg)]"
+          aria-hidden="true"></span>
+        <p
+          class="font-mono text-xs uppercase tracking-widest text-amber-600"
+          data-reveal
+        >
+          {tl.qc.label}
+        </p>
+        <h2 class="mt-2 text-2xl font-bold text-stone-900" data-reveal>
+          <span class="mr-1">{chapterEmojis.qc}</span>
+          {tl.qc.title}
+        </h2>
+        <p class="mt-3 max-w-xl leading-relaxed text-stone-600" data-reveal>
+          {tl.qc.text}
+        </p>
+        <div
+          class="mt-6 max-w-md rounded-lg border border-stone-700 bg-stone-900 p-4 font-mono text-xs leading-6 shadow-md"
+          data-qc
+          data-reveal
+        >
+          <p class="text-stone-500">{tt.home.qcCmd}</p>
+          {
+            tt.home.qcLines.map((line) => (
+              <p
+                class:list={[
+                  "qc-line",
+                  line.startsWith("✗")
+                    ? "qc-fail text-red-400"
+                    : "text-emerald-400",
+                ]}
+              >
+                {line}
+              </p>
+            ))
+          }
+          <p class="qc-line qc-caret text-stone-500">{tt.home.qcNote}</p>
+        </div>
+      </section>
+
+      <!-- chapter 02: the tour bus -->
+      <section id="tour" class="relative scroll-mt-24 py-12 pl-10">
+        <span
+          class="absolute left-0 top-[3.55rem] z-[1] h-[15px] w-[15px] rounded-full border-2 border-amber-500 bg-[var(--page-bg)]"
+          aria-hidden="true"></span>
+        <p
+          class="font-mono text-xs uppercase tracking-widest text-amber-600"
+          data-reveal
+        >
+          {tl.tour.label}
+        </p>
+        <h2 class="mt-2 text-2xl font-bold text-stone-900" data-reveal>
+          <span class="mr-1">{chapterEmojis.tour}</span>
+          {tl.tour.title}
+        </h2>
+        <p class="mt-3 max-w-xl leading-relaxed text-stone-600" data-reveal>
+          {tl.tour.text}
+        </p>
+        <div class="mt-20 max-w-xl" data-reveal>
+          <div class="border-t-2 border-dashed border-stone-300" data-road>
+          </div>
+          <div
+            class="mt-1.5 flex justify-between font-mono text-[10px] uppercase tracking-wider text-stone-400"
+          >
+            <span>{tl.tour.roadFrom}</span>
+            <span>{tl.tour.roadTo} →</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- chapter 01: the hotel lobby -->
+      <section id="hotel" class="relative scroll-mt-24 py-12 pl-10">
+        <span
+          class="absolute left-0 top-[3.55rem] z-[1] h-[15px] w-[15px] rounded-full border-2 border-amber-500 bg-[var(--page-bg)]"
+          aria-hidden="true"></span>
+        <p
+          class="font-mono text-xs uppercase tracking-widest text-amber-600"
+          data-reveal
+        >
+          {tl.hotel.label}
+        </p>
+        <h2 class="mt-2 text-2xl font-bold text-stone-900" data-reveal>
+          <span class="mr-1">{chapterEmojis.hotel}</span>
+          {tl.hotel.title}
+        </h2>
+        <p class="mt-3 max-w-xl leading-relaxed text-stone-600" data-reveal>
+          {tl.hotel.text}
+        </p>
+        <div class="relative z-10 mt-6 inline-block" data-bell-wrap>
+          <button
+            type="button"
+            class="relative z-[2] inline-flex cursor-pointer items-center gap-3 rounded-lg border border-stone-200 bg-white px-4 py-3 shadow-sm transition-all hover:-translate-y-0.5 hover:border-amber-500/50 hover:shadow-md"
+            data-bell
+            data-reveal
+          >
+            <span class="inline-block origin-bottom text-3xl" data-bell-icon
+              >🛎️</span
+            >
+            <span class="font-mono text-xs text-stone-400"
+              >{tl.hotel.bellHint}</span
+            >
+            <span
+              class="pointer-events-none absolute -top-3 left-4 font-mono text-xs font-semibold text-amber-600"
+              style="opacity: 0"
+              data-ding>ding!</span
+            >
+          </button>
+
+          <!-- the receptionist leans out from behind the desk's left edge to wave -->
+          <div
+            class="receptionist pointer-events-none absolute bottom-1 right-full z-[1] -mr-3"
+            data-receptionist
+            aria-hidden="true"
+          >
+            <!-- bubble opens rightward over the desk so it stays on screen -->
+            <span
+              class="receptionist-bubble absolute bottom-[calc(100%+2px)] left-0 whitespace-nowrap rounded-2xl rounded-bl-sm border border-amber-200 bg-white px-3 py-1.5 font-mono text-xs text-stone-700 shadow-md"
+              data-greet-bubble>{tl.hotel.greet}</span
+            >
+            <svg
+              class="receptionist-figure"
+              width="46"
+              height="62"
+              viewBox="0 0 46 62"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <ellipse cx="23" cy="59" rx="13" ry="2.6" fill="#000" opacity="0.12" />
+              <!-- vest / body -->
+              <path
+                d="M12 58 L14.5 36 Q14.5 31 23 31 Q31.5 31 31.5 36 L34 58 Z"
+                fill="#f59e0b"
+              />
+              <!-- shirt + bow tie -->
+              <path d="M19.5 31 L23 37 L26.5 31 Z" fill="#fef3c7" />
+              <path
+                d="M23 32.5 L20.5 31 L20.5 35 Z M23 32.5 L25.5 31 L25.5 35 Z"
+                fill="#b45309"
+              />
+              <!-- resting arm (figure's right) -->
+              <rect x="31.5" y="35.5" width="4" height="15" rx="2" fill="#ea9209" />
+              <!-- waving arm on the left — the side that leans into view -->
+              <g class="receptionist-arm" data-wave-arm>
+                <rect
+                  x="12"
+                  y="22"
+                  width="4"
+                  height="15"
+                  rx="2"
+                  fill="#ea9209"
+                  transform="rotate(-34 14 36)"
+                />
+                <circle cx="8" cy="22.5" r="2.6" fill="#f4c99a" />
+              </g>
+              <!-- head -->
+              <circle cx="23" cy="19" r="8.2" fill="#f4c99a" />
+              <!-- hair -->
+              <path
+                d="M14.9 18 Q14 9 23 9 Q32 9 31.1 18 Q31 13.5 23 13.5 Q15 13.5 14.9 18 Z"
+                fill="#3f2d1d"
+              />
+              <!-- eyes + smile -->
+              <circle cx="20" cy="19" r="1.1" fill="#3f2d1d" />
+              <circle cx="26" cy="19" r="1.1" fill="#3f2d1d" />
+              <path
+                d="M20 22.4 Q23 24.6 26 22.4"
+                stroke="#b45309"
+                stroke-width="1.1"
+                stroke-linecap="round"
+              />
+            </svg>
+          </div>
+        </div>
+      </section>
+
+      <!-- the origin -->
+      <section id="origin" class="relative scroll-mt-24 py-12 pl-10">
+        <span
+          class="absolute left-0 top-[3.55rem] z-[1] flex h-[15px] w-[15px] items-center justify-center rounded-full border-2 border-amber-500 bg-amber-400"
+          aria-hidden="true"></span>
+        <p
+          class="font-mono text-xs uppercase tracking-widest text-amber-600"
+          data-reveal
+        >
+          {tl.origin.label}
+        </p>
+        <h2 class="mt-2 text-2xl font-bold text-stone-900" data-reveal>
+          <span class="mr-1">{chapterEmojis.origin}</span>
+          {tl.origin.title}
+        </h2>
+        <p class="mt-3 max-w-xl leading-relaxed text-stone-600" data-reveal>
+          {tl.origin.text}
+        </p>
+        <div class="mt-6" data-reveal>
+          <a
+            href={localizePath(lang, "/about")}
+            class="inline-block rounded-md bg-amber-400 px-5 py-2.5 font-mono text-sm font-semibold text-stone-900 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md"
+          >
+            {tl.origin.cta}
+          </a>
+        </div>
+      </section>
+    </div>
+
+    <!-- Contact -->
+    <section class="py-12">
+      <h2
+        class="font-mono text-sm uppercase tracking-widest text-stone-400"
+        data-reveal
+      >
+        {tt.home.contact}
+      </h2>
+      <p class="mt-4 max-w-xl leading-relaxed text-stone-600" data-reveal>
+        {tt.home.contactText}
+      </p>
+      <p class="mt-4 font-mono text-sm" data-reveal>
+        <a
+          href="mailto:le.minh.y.95@gmail.com"
+          class="text-amber-700 underline-offset-4 hover:underline"
+          >le.minh.y.95@gmail.com</a
+        >
+      </p>
+    </section>
+  </div>
+</Layout>
+
+<script>
+  import { animate, stagger, utils } from "animejs";
+
+  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  let scrollHandler: (() => void) | null = null;
+
+  // Wraps each grapheme in a span (Vietnamese diacritics stay intact),
+  // keeping words in nowrap spans so lines never break mid-word.
+  function splitChars(el: HTMLElement): NodeListOf<HTMLElement> {
+    const seg =
+      "Segmenter" in Intl
+        ? new Intl.Segmenter(undefined, { granularity: "grapheme" })
+        : null;
+    const graphemes = (s: string) =>
+      seg ? [...seg.segment(s)].map((x) => x.segment) : [...s];
+    const walk = (node: Node) => {
+      [...node.childNodes].forEach((child) => {
+        if (child.nodeType === Node.TEXT_NODE) {
+          const frag = document.createDocumentFragment();
+          for (const part of (child.textContent ?? "").split(/(\s+)/)) {
+            if (!part) continue;
+            if (/^\s+$/.test(part)) {
+              frag.append(document.createTextNode(" "));
+              continue;
+            }
+            const word = document.createElement("span");
+            word.className = "split-word";
+            for (const ch of graphemes(part)) {
+              const c = document.createElement("span");
+              c.className = "split-char";
+              c.textContent = ch;
+              word.append(c);
+            }
+            frag.append(word);
+          }
+          child.replaceWith(frag);
+        } else if (child.nodeType === Node.ELEMENT_NODE) {
+          walk(child);
+        }
+      });
+    };
+    walk(el);
+    return el.querySelectorAll(".split-char");
+  }
+
+  function initHero(root: HTMLElement) {
+    const h1 = root.querySelector<HTMLElement>("[data-split]");
+    if (!h1 || reduced) return;
+    const chars = splitChars(h1);
+    utils.set(chars, { opacity: 0, translateY: "0.6em" });
+    h1.style.opacity = "1";
+    animate(chars, {
+      opacity: [0, 1],
+      translateY: ["0.6em", "0em"],
+      duration: 850,
+      ease: "outExpo",
+      delay: stagger(16),
+    });
+  }
+
+  function initQc(root: HTMLElement) {
+    const term = root.querySelector<HTMLElement>("[data-qc]");
+    if (!term || reduced) return;
+    const lines = term.querySelectorAll(".qc-line");
+    const STEP = 550;
+    const io = new IntersectionObserver(
+      (entries, obs) => {
+        if (!entries.some((e) => e.isIntersecting)) return;
+        obs.disconnect();
+        animate(lines, {
+          opacity: [0, 1],
+          translateX: [-6, 0],
+          duration: 320,
+          ease: "outQuad",
+          delay: stagger(STEP, { start: 250 }),
+        });
+        const fail = term.querySelector(".qc-fail");
+        setTimeout(() => fail?.classList.add("qc-shake"), 250 + STEP * 3 + 320);
+      },
+      { threshold: 0.5 },
+    );
+    io.observe(term);
+  }
+
+  // Synthesised front-desk bell: two short strikes, no audio asset needed.
+  let audioCtx: AudioContext | null = null;
+  function tingTing() {
+    try {
+      audioCtx ??= new AudioContext();
+      const strike = (at: number) => {
+        const ctx = audioCtx!;
+        const gain = ctx.createGain();
+        gain.connect(ctx.destination);
+        gain.gain.setValueAtTime(0.0001, at);
+        gain.gain.exponentialRampToValueAtTime(0.35, at + 0.012);
+        gain.gain.exponentialRampToValueAtTime(0.0001, at + 1.1);
+        // fundamental + inharmonic partial = bell-ish timbre
+        for (const [freq, level] of [
+          [1567.98, 1],
+          [1567.98 * 2.76, 0.32],
+        ]) {
+          const osc = ctx.createOscillator();
+          const partial = ctx.createGain();
+          osc.type = "sine";
+          osc.frequency.value = freq;
+          partial.gain.value = level;
+          osc.connect(partial);
+          partial.connect(gain);
+          osc.start(at);
+          osc.stop(at + 1.2);
+        }
+      };
+      const now = audioCtx.currentTime;
+      strike(now);
+      strike(now + 0.16);
+    } catch {
+      // no audio? the bell stays a silent movie
+    }
+  }
+
+  // Set by initBell; the car's crash at the end of its journey rings it too.
+  let ringBell: (() => void) | null = null;
+
+  function initBell(root: HTMLElement) {
+    const btn = root.querySelector<HTMLElement>("[data-bell]");
+    if (!btn) return;
+    const icon = btn.querySelector("[data-bell-icon]");
+    const ding = btn.querySelector("[data-ding]");
+    // The receptionist steps out, waves, then ducks back behind the desk.
+    const greeter = root.querySelector<HTMLElement>("[data-receptionist]");
+    let greetTimer: ReturnType<typeof setTimeout> | undefined;
+    const greet = () => {
+      if (!greeter) return;
+      clearTimeout(greetTimer);
+      // restart cleanly so rapid taps replay the wave from the top
+      greeter.classList.remove("is-greeting");
+      void greeter.offsetWidth;
+      greeter.classList.add("is-greeting");
+      greetTimer = setTimeout(
+        () => greeter.classList.remove("is-greeting"),
+        reduced ? 2200 : 2800,
+      );
+    };
+    const ring = () => {
+      tingTing();
+      greet();
+      if (reduced || !icon) return;
+      animate(icon, {
+        keyframes: [
+          { rotate: -16 },
+          { rotate: 12 },
+          { rotate: -7 },
+          { rotate: 3 },
+          { rotate: 0 },
+        ],
+        duration: 600,
+        ease: "inOutSine",
+      });
+      if (ding) {
+        animate(ding, {
+          keyframes: [
+            { opacity: 1, translateY: -8 },
+            { opacity: 0, translateY: -22 },
+          ],
+          duration: 750,
+          ease: "outQuad",
+        });
+      }
+    };
+    ringBell = ring;
+    btn.addEventListener("click", ring);
+  }
+
+  // Low-poly 3D car built from three.js primitives (no model file).
+  // Lives in a small transparent canvas that the scroll handler drives
+  // along the zigzag route; three.js only loads when the timeline nears.
+  interface Car3D {
+    update: (angDeg: number, d: number) => void;
+    dispose: () => void;
+  }
+
+  async function createCar3D(canvas: HTMLCanvasElement): Promise<Car3D> {
+    const THREE = await import("three");
+    const SIZE = 200;
+    const renderer = new THREE.WebGLRenderer({
+      canvas,
+      alpha: true,
+      antialias: true,
+    });
+    renderer.setPixelRatio(Math.min(2, window.devicePixelRatio));
+    renderer.setSize(SIZE, SIZE);
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(30, 1, 1, 250);
+    camera.position.set(0, 62, 48);
+    camera.lookAt(0, 2, 0);
+
+    scene.add(new THREE.AmbientLight(0xfff6e8, 0.9));
+    const sun = new THREE.DirectionalLight(0xffffff, 1.7);
+    sun.position.set(20, 34, 14);
+    sun.castShadow = true;
+    sun.shadow.mapSize.set(512, 512);
+    sun.shadow.camera.left = -28;
+    sun.shadow.camera.right = 28;
+    sun.shadow.camera.top = 28;
+    sun.shadow.camera.bottom = -28;
+    scene.add(sun);
+
+    // invisible ground that only catches the car's shadow
+    const ground = new THREE.Mesh(
+      new THREE.PlaneGeometry(90, 90),
+      new THREE.ShadowMaterial({ opacity: 0.16 }),
+    );
+    ground.rotation.x = -Math.PI / 2;
+    ground.receiveShadow = true;
+    scene.add(ground);
+
+    const car = new THREE.Group();
+    const mat = (color: number, opts: Record<string, unknown> = {}) =>
+      new THREE.MeshStandardMaterial({
+        color,
+        roughness: 0.55,
+        metalness: 0.08,
+        ...opts,
+      });
+    const box = (
+      w: number,
+      h: number,
+      l: number,
+      color: number,
+      x: number,
+      y: number,
+      z: number,
+      opts: Record<string, unknown> = {},
+    ) => {
+      const m = new THREE.Mesh(
+        new THREE.BoxGeometry(w, h, l),
+        mat(color, opts),
+      );
+      m.position.set(x, y, z);
+      m.castShadow = true;
+      car.add(m);
+      return m;
+    };
+
+    // body, cabin, glass — amber to match the theme
+    box(10, 3.4, 19, 0xf59e0b, 0, 3.4, 0);
+    box(8.4, 3.4, 9.5, 0xfbbf24, 0, 6.6, -1.2);
+    const glass = { roughness: 0.25, metalness: 0.2 };
+    box(7.8, 2.8, 0.6, 0x57534e, 0, 6.6, 3.7, glass).rotation.x = -0.16; // windshield
+    box(7.8, 2.6, 0.6, 0x57534e, 0, 6.6, -6.1, glass).rotation.x = 0.16; // rear window
+    box(0.5, 2.1, 7.4, 0x57534e, 4.25, 6.7, -1.2, glass); // side windows
+    box(0.5, 2.1, 7.4, 0x57534e, -4.25, 6.7, -1.2, glass);
+    // bumpers
+    box(10.4, 1.1, 1.4, 0xd97706, 0, 2.2, 9.1);
+    box(10.4, 1.1, 1.4, 0xd97706, 0, 2.2, -9.1);
+    // headlights & taillights
+    const lamp = { emissive: 0xfff3c4, emissiveIntensity: 0.9 };
+    box(1.8, 1.1, 0.5, 0xfff7d6, 3.1, 3.8, 9.6, lamp);
+    box(1.8, 1.1, 0.5, 0xfff7d6, -3.1, 3.8, 9.6, lamp);
+    const tail = { emissive: 0x991b1b, emissiveIntensity: 0.7 };
+    box(1.6, 1, 0.5, 0xb91c1c, 3.1, 3.8, -9.6, tail);
+    box(1.6, 1, 0.5, 0xb91c1c, -3.1, 3.8, -9.6, tail);
+
+    // wheels: tyre + hubcap, spinning on their axles
+    const tyreGeo = new THREE.CylinderGeometry(2.1, 2.1, 1.7, 18);
+    const capGeo = new THREE.CylinderGeometry(1.05, 1.05, 1.74, 12);
+    const tyreMat = mat(0x292524, { roughness: 0.9 });
+    const capMat = mat(0xd6d3d1, { roughness: 0.35 });
+    const spinners: InstanceType<typeof THREE.Mesh>[] = [];
+    for (const [x, z] of [
+      [5.1, 6],
+      [-5.1, 6],
+      [5.1, -6],
+      [-5.1, -6],
+    ]) {
+      const wheel = new THREE.Group();
+      const tyre = new THREE.Mesh(tyreGeo, tyreMat);
+      tyre.castShadow = true;
+      const cap = new THREE.Mesh(capGeo, capMat);
+      wheel.add(tyre, cap);
+      wheel.rotation.z = Math.PI / 2; // axle across the car
+      wheel.position.set(x, 2.1, z);
+      car.add(wheel);
+      spinners.push(tyre, cap);
+    }
+    scene.add(car);
+
+    let targetYaw = 0;
+    let yaw = 0;
+    let lastDist = 0;
+    let needsRender = true;
+    let running = true;
+
+    const tick = () => {
+      if (!running) return;
+      requestAnimationFrame(tick);
+      const delta = ((targetYaw - yaw + Math.PI * 3) % (Math.PI * 2)) - Math.PI;
+      if (Math.abs(delta) > 0.001 || needsRender) {
+        yaw += delta * 0.16;
+        car.rotation.y = yaw;
+        renderer.render(scene, camera);
+        needsRender = false;
+      }
+    };
+    requestAnimationFrame(tick);
+
+    return {
+      update(angDeg, d) {
+        // path angle is CSS-rotateZ convention; three.js yaw is its negation
+        targetYaw = (-angDeg * Math.PI) / 180;
+        const step = (d - lastDist) * 0.05;
+        lastDist = d;
+        for (const s of spinners) s.rotation.y -= step;
+        needsRender = true;
+      },
+      dispose() {
+        running = false;
+        renderer.dispose();
+      },
+    };
+  }
+
+  let car3d: Car3D | null = null;
+  let car3dPending = false;
+
+  // Scroll-linked effects: timeline line draws itself, the page bg drifts
+  // toward sepia "old photo" tones, and the tour bus drives back in time.
+  function initScroll(root: HTMLElement) {
+    const tl = root.querySelector<HTMLElement>("[data-timeline]");
+    const progress = root.querySelector<HTMLElement>("[data-tl-progress]");
+    const road = root.querySelector<HTMLElement>("[data-road]");
+    const bellBtn = root.querySelector<HTMLElement>("[data-bell]");
+    const car = root.querySelector<HTMLElement>("[data-car]");
+    if (!tl || !progress || reduced) return;
+
+    const clamp01 = (v: number) => Math.min(1, Math.max(0, v));
+    const BG_FROM = [250, 250, 249]; // stone-50
+    const BG_TO = [247, 238, 220]; // aged paper
+
+    // The journey: zigzag straight through the content (cards cover the car),
+    // overshooting the column edges a bit — then a horizontal run on the
+    // Da Nang → Hoi An road, then down to crash into the front-desk bell.
+    interface Seg {
+      x0: number;
+      y0: number;
+      dx: number;
+      dy: number;
+      len: number;
+      ang: number;
+    }
+    let segs: Seg[] = [];
+    let totalLen = 0;
+    let pathW = 0;
+    let pathH = 0;
+    let pEnd = 1; // scroll progress at which the car reaches the bell
+    let lastD = -1;
+    let dirSign = 1;
+    let crashArmed = true;
+
+    const buildPath = () => {
+      const lineEl = car!.parentElement!;
+      const lineRect = lineEl.getBoundingClientRect();
+      const tlRect = tl.getBoundingClientRect();
+      const H = lineEl.offsetHeight;
+      // overshoot past both content edges, bounded by the viewport margin
+      const over = Math.min(90, Math.max(20, tlRect.left - 105));
+      const xL = tlRect.left - lineRect.left - over;
+      const xR = tlRect.right - lineRect.left + over;
+      const pts: [number, number][] = [[0, 0]];
+      let endY = H;
+
+      if (road && bellBtn) {
+        const rr = road.getBoundingClientRect();
+        const br = bellBtn.getBoundingClientRect();
+        const roadY = rr.top - lineRect.top - 12;
+        const roadL = rr.left - lineRect.left + 10;
+        const roadR = rr.right - lineRect.left - 6;
+        const bellX = br.right - lineRect.left + 55; // park nose-first at the button's right edge
+        const bellY = br.top + br.height / 2 - lineRect.top - 2;
+        const zigH = Math.max(140, roadY - 160);
+        let lanes = Math.max(2, Math.round(zigH / 430));
+        if (lanes % 2 === 1) lanes += 1; // end the zigzag on the left side
+        for (let i = 1; i <= lanes; i++)
+          pts.push([i % 2 ? xR : xL, (zigH * i) / lanes]);
+        pts.push([roadL, roadY]); // swing in on the Da Nang side (left)
+        pts.push([roadR, roadY]); // the run toward Hoi An
+        pts.push([roadR, bellY]); // down the right-hand side
+        pts.push([bellX, bellY]); // turn left, crash into the bell from the right
+        endY = bellY;
+      } else {
+        // fallback: plain zigzag to the bottom
+        const lanes = Math.max(4, Math.round(H / 430));
+        for (let i = 1; i <= lanes; i++)
+          pts.push([i % 2 ? xR : xL, (H * i) / lanes]);
+      }
+
+      segs = [];
+      totalLen = 0;
+      for (let i = 0; i < pts.length - 1; i++) {
+        const [x0, y0] = pts[i];
+        const [x1, y1] = pts[i + 1];
+        const len = Math.hypot(x1 - x0, y1 - y0);
+        segs.push({
+          x0,
+          y0,
+          dx: x1 - x0,
+          dy: y1 - y0,
+          len,
+          ang: (Math.atan2(y1 - y0, x1 - x0) * 180) / Math.PI - 90,
+        });
+        totalLen += len;
+      }
+      pEnd = clamp01(endY / H) || 1;
+    };
+
+    const pointAt = (d: number) => {
+      for (const s of segs) {
+        if (d <= s.len) {
+          const t = d / s.len;
+          return { x: s.x0 + s.dx * t, y: s.y0 + s.dy * t, ang: s.ang };
+        }
+        d -= s.len;
+      }
+      const s = segs[segs.length - 1];
+      return { x: s.x0 + s.dx, y: s.y0 + s.dy, ang: s.ang };
+    };
+
+    let raf = 0;
+    const frame = () => {
+      raf = 0;
+      const vh = window.innerHeight;
+      const rect = tl.getBoundingClientRect();
+      const p = clamp01((vh * 0.5 - rect.top) / rect.height);
+      progress.style.transform = `scaleY(${p})`;
+      const bg = BG_FROM.map((c, i) => Math.round(c + (BG_TO[i] - c) * p));
+      document.documentElement.style.setProperty(
+        "--page-bg",
+        `rgb(${bg.join(",")})`,
+      );
+      if (car) {
+        const lineEl = car.parentElement!;
+        const w = tl.offsetWidth;
+        const h = lineEl.offsetHeight;
+        if (w !== pathW || h !== pathH) {
+          pathW = w;
+          pathH = h;
+          buildPath();
+        }
+        // the car finishes its route (bell crash) when the line tip reaches the bell
+        const d = Math.min(totalLen, (p / pEnd) * totalLen);
+        const pos = pointAt(d);
+        // scroll direction: reversing makes the car turn around and drive back
+        if (lastD >= 0 && Math.abs(d - lastD) > 0.8)
+          dirSign = d > lastD ? 1 : -1;
+        const arrived = d >= totalLen - 1;
+        if (car3d && arrived && crashArmed && dirSign > 0) {
+          crashArmed = false;
+          ringBell?.();
+        } else if (d < totalLen - 140) {
+          crashArmed = true;
+        }
+        lastD = d;
+        car.style.transform = `translate3d(${pos.x.toFixed(1)}px, ${pos.y.toFixed(1)}px, 0)`;
+        car3d?.update(pos.ang + (dirSign < 0 ? 180 : 0), d);
+        car.classList.toggle("tl-car-on", p > 0.005);
+      }
+    };
+    const onScroll = () => {
+      if (!raf) raf = requestAnimationFrame(frame);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll, { passive: true });
+    frame();
+    scrollHandler = onScroll;
+
+    // pull in three.js only when the journey is about to start
+    const canvas = car?.querySelector<HTMLCanvasElement>("[data-car-canvas]");
+    if (canvas && "WebGLRenderingContext" in window) {
+      const io = new IntersectionObserver(
+        (entries, obs) => {
+          if (!entries.some((e) => e.isIntersecting) || car3dPending) return;
+          obs.disconnect();
+          car3dPending = true;
+          createCar3D(canvas)
+            .then((c) => {
+              car3d = c;
+              frame();
+            })
+            .catch(() => {
+              // WebGL unavailable: the journey continues without the car
+            });
+        },
+        { rootMargin: "800px 0px" },
+      );
+      io.observe(tl);
+    }
+  }
+
+  function destroy() {
+    if (scrollHandler) {
+      window.removeEventListener("scroll", scrollHandler);
+      window.removeEventListener("resize", scrollHandler);
+      scrollHandler = null;
+    }
+    car3d?.dispose();
+    car3d = null;
+    car3dPending = false;
+    ringBell = null;
+    // Leaving the homepage: hand the bg back to the default light tone
+    document.documentElement.style.removeProperty("--page-bg");
+  }
+
+  function init() {
+    const root = document.querySelector<HTMLElement>("[data-home]");
+    if (!root || root.hasAttribute("data-init")) return;
+    root.setAttribute("data-init", "");
+    // Autoplay policy: scrolling is not a user gesture, so warm up the
+    // audio context on the first click/tap — then the crash can ring out.
+    // Once warmed, retire the "tap first" nudge in the hero.
+    const soundHint = root.querySelector<HTMLElement>("[data-sound-hint]");
+    window.addEventListener(
+      "pointerdown",
+      () => {
+        try {
+          audioCtx ??= new AudioContext();
+          if (audioCtx.state === "suspended") void audioCtx.resume();
+        } catch {
+          /* no audio */
+        }
+        soundHint?.classList.add("is-warmed");
+      },
+      { once: true },
+    );
+    initHero(root);
+    initQc(root);
+    initBell(root);
+    initScroll(root);
+  }
+
+  document.addEventListener("astro:page-load", init);
+  document.addEventListener("astro:before-swap", destroy);
+  init();
+</script>

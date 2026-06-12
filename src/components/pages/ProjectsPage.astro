@@ -1,0 +1,30 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import ProjectCard from '../ProjectCard.astro';
+import { projects } from '../../data/projects';
+import { t, type Lang } from '../../i18n/translations';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const tt = t[lang].projects;
+---
+
+<Layout lang={lang} title={tt.title}>
+  <section class="py-6">
+    <p class="font-mono text-sm text-amber-600" data-reveal>{tt.kicker}</p>
+    <h1 class="mt-3 text-3xl font-bold text-stone-900" data-reveal>{tt.heading}</h1>
+    <p class="mt-4 max-w-xl leading-relaxed text-stone-600" data-reveal set:html={tt.introHtml} />
+    <div class="mt-8 grid gap-4" data-reveal-group style="perspective: 1200px">
+      {
+        projects.map((project) => (
+          <div data-reveal-item>
+            <ProjectCard project={project} lang={lang} />
+          </div>
+        ))
+      }
+    </div>
+  </section>
+</Layout>

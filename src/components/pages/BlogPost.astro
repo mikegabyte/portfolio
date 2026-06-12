@@ -1,0 +1,53 @@
+---
+import { render, type CollectionEntry } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import { t, localizePath, type Lang } from '../../i18n/translations';
+
+interface Props {
+  lang: Lang;
+  post: CollectionEntry<'blog'>;
+}
+
+const { lang, post } = Astro.props;
+const tt = t[lang].blog;
+const { Content } = await render(post);
+
+const dateFmt = new Intl.DateTimeFormat(lang === 'vi' ? 'vi-VN' : 'en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+---
+
+<Layout lang={lang} title={`${post.data.title} — mikegabyte`} description={post.data.description}>
+  <article class="py-6">
+    <a href={localizePath(lang, '/blog')} class="font-mono text-sm text-stone-400 transition-colors hover:text-amber-700">
+      {tt.backToBlog}
+    </a>
+
+    <header class="mt-6">
+      <div class="flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-xs text-stone-400">
+        <time datetime={post.data.date.toISOString()}>{dateFmt.format(post.data.date)}</time>
+        {
+          post.data.series && (
+            <span class="rounded-full border border-amber-500/40 bg-amber-50 px-2 py-0.5 text-amber-700">
+              {post.data.series}
+              {post.data.seriesPart ? ` · ${tt.part} ${post.data.seriesPart}` : ''}
+            </span>
+          )
+        }
+      </div>
+      <h1 class="mt-3 text-3xl font-bold leading-tight text-stone-900 sm:text-4xl">{post.data.title}</h1>
+    </header>
+
+    <div class="report prose-blog mt-8 max-w-none text-stone-700">
+      <Content />
+    </div>
+
+    <footer class="mt-12 border-t border-stone-200 pt-6">
+      <a href={localizePath(lang, '/blog')} class="font-mono text-sm text-stone-400 transition-colors hover:text-amber-700">
+        {tt.backToBlog}
+      </a>
+    </footer>
+  </article>
+</Layout>

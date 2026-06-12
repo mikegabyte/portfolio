@@ -1,0 +1,45 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { t, type Lang } from '../../i18n/translations';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const tt = t[lang].about;
+---
+
+<Layout lang={lang} title={tt.title} description={tt.description}>
+  <section class="py-6">
+    <p class="font-mono text-sm text-amber-600" data-reveal>{tt.kicker}</p>
+    <h1 class="mt-3 text-3xl font-bold leading-tight text-stone-900 sm:text-4xl" data-reveal>{tt.heading}</h1>
+    <p class="mt-4 max-w-xl leading-relaxed text-stone-600" data-reveal>{tt.intro}</p>
+  </section>
+
+  <section class="relative py-8">
+    <div class="absolute bottom-8 left-[1.05rem] top-8 w-px border-l border-dashed border-stone-300"></div>
+    <ol class="space-y-10">
+      {
+        tt.stops.map((stop) => (
+          <li class="relative flex gap-5" data-reveal>
+            <div class="z-[1] flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-stone-300 bg-[var(--page-bg)] text-lg">
+              {stop.emoji}
+            </div>
+            <div>
+              <h2 class="font-mono text-sm font-semibold uppercase tracking-wide text-amber-700">{stop.name}</h2>
+              <p class="mt-2 max-w-xl leading-relaxed text-stone-600">{stop.story}</p>
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+  </section>
+
+  <section class="py-8">
+    <div class="rounded-lg border border-amber-500/30 bg-amber-400/10 p-6" data-reveal>
+      <h2 class="font-mono text-sm uppercase tracking-widest text-amber-700">{tt.giftTitle}</h2>
+      <p class="mt-3 max-w-xl leading-relaxed text-stone-700" set:html={tt.giftHtml} />
+    </div>
+  </section>
+</Layout>

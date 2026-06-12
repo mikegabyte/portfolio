@@ -1,0 +1,220 @@
+---
+import '../styles/global.css';
+import { ClientRouter } from 'astro:transitions';
+import { t, localizePath, type Lang } from '../i18n/translations';
+
+interface Props {
+  lang?: Lang;
+  title?: string;
+  description?: string;
+}
+
+const { lang = 'en', title, description } = Astro.props;
+const tt = t[lang];
+const pageTitle = title ?? tt.meta.title;
+const pageDescription = description ?? tt.meta.description;
+
+const current = Astro.url.pathname;
+// Path of this page in the other language
+const enPath = current.replace(/^\/vi(\/|$)/, '/') || '/';
+const viPath = localizePath('vi', enPath);
+
+const nav = [
+  { href: localizePath(lang, '/'), label: tt.nav.home },
+  { href: localizePath(lang, '/projects'), label: tt.nav.projects },
+  { href: localizePath(lang, '/about'), label: tt.nav.tour },
+  { href: localizePath(lang, '/blog'), label: tt.nav.blog },
+];
+
+const isActive = (href: string) =>
+  current === href ||
+  current === href + '/' ||
+  (href !== '/' && href !== '/vi/' && current.startsWith(href));
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={pageDescription} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={pageDescription} />
+    <link rel="alternate" hreflang="en" href={enPath} />
+    <link rel="alternate" hreflang="vi" href={viPath} />
+    <ClientRouter />
+    <script is:inline>
+      // Marks JS availability so CSS can pre-hide elements that animate in.
+      document.documentElement.classList.add('js');
+    </script>
+    <script is:inline>
+      // First visit only: visitors whose browser speaks Vietnamese get /vi/.
+      // An explicit choice via the lang switcher is stored and always wins.
+      (function () {
+        var KEY = 'pref-lang';
+        var path = location.pathname;
+        var onVi = path === '/vi' || path.indexOf('/vi/') === 0;
+        if (localStorage.getItem(KEY)) return;
+        var prefs = navigator.languages || [navigator.language || ''];
+        var wantsVi = prefs.some(function (l) {
+          return l && l.toLowerCase().indexOf('vi') === 0;
+        });
+        localStorage.setItem(KEY, wantsVi ? 'vi' : 'en');
+        if (wantsVi && !onVi) {
+          location.replace('/vi' + (path === '/' ? '/' : path));
+        }
+      })();
+    </script>
+  </head>
+  <body class="min-h-screen font-sans text-stone-700 antialiased">
+    <div class="spotlight" aria-hidden="true"></div>
+    <div class="relative z-10 mx-auto flex min-h-screen max-w-3xl flex-col px-5">
+      <header
+        class="site-header sticky top-0 z-20 -mx-5 border-b border-stone-200/80 px-5 backdrop-blur"
+        transition:animate="none"
+      >
+        <nav class="flex items-center justify-between py-4 font-mono text-sm">
+          <a href={localizePath(lang, '/')} class="font-semibold text-stone-900 transition-colors hover:text-amber-600"
+            >~/mikegabyte</a
+          >
+          <div class="flex items-center gap-3 sm:gap-5">
+            {
+              nav.map((item) => (
+                <a
+                  href={item.href}
+                  aria-current={isActive(item.href) ? 'page' : undefined}
+                  class:list={[
+                    'nav-link transition-colors hover:text-amber-700',
+                    isActive(item.href) ? 'text-amber-700' : 'text-stone-500',
+                  ]}
+                >
+                  {item.label}
+                </a>
+              ))
+            }
+            <a
+              href="/cv.pdf"
+              class="rounded border border-amber-500/50 px-2 py-1 text-amber-700 transition-colors hover:bg-amber-400 hover:text-stone-900"
+            >
+              {tt.nav.cv}
+            </a>
+            <span class="flex items-center gap-1 border-l border-stone-200 pl-3 text-xs sm:pl-4">
+              <a
+                href={enPath}
+                data-set-lang="en"
+                class:list={[
+                  'transition-colors hover:text-amber-700',
+                  lang === 'en' ? 'font-semibold text-amber-700' : 'text-stone-400',
+                ]}
+                aria-label="English">en</a
+              >
+              <span class="text-stone-300">/</span>
+              <a
+                href={viPath}
+                data-set-lang="vi"
+                class:list={[
+                  'transition-colors hover:text-amber-700',
+                  lang === 'vi' ? 'font-semibold text-amber-700' : 'text-stone-400',
+                ]}
+                aria-label="Tiếng Việt">vi</a
+              >
+            </span>
+          </div>
+        </nav>
+      </header>
+
+      <main class="flex-1 py-12">
+        <slot />
+      </main>
+
+      <footer class="border-t border-stone-200 py-8 font-mono text-xs text-stone-400" transition:animate="none">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <p>
+            <a href="mailto:le.minh.y.95@gmail.com" class="transition-colors hover:text-amber-700">{tt.footer.email}</a>
+            <span class="mx-1 text-stone-300">·</span>
+            <a href="https://github.com/mikegabyte" class="transition-colors hover:text-amber-700">{tt.footer.github}</a>
+          </p>
+          <p title="Old habits die hard.">{tt.footer.tips}</p>
+        </div>
+      </footer>
+    </div>
+
+    <script is:inline data-astro-rerun>
+      // Remember an explicit language choice
+      document.querySelectorAll('[data-set-lang]').forEach(function (el) {
+        el.addEventListener('click', function () {
+          localStorage.setItem('pref-lang', el.getAttribute('data-set-lang'));
+        });
+      });
+    </script>
+
+    <script>
+      import { animate, stagger } from 'animejs';
+
+      const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+      // --- Cursor spotlight + 3D tilt cards (one delegated listener, survives page swaps) ---
+      let pointerRaf = 0;
+      let lastTilt: HTMLElement | null = null;
+      window.addEventListener('mousemove', (e) => {
+        if (pointerRaf) return;
+        pointerRaf = requestAnimationFrame(() => {
+          pointerRaf = 0;
+          const doc = document.documentElement;
+          doc.style.setProperty('--spot-x', e.clientX + 'px');
+          doc.style.setProperty('--spot-y', e.clientY + 'px');
+
+          const card =
+            e.target instanceof Element ? (e.target.closest('[data-tilt]') as HTMLElement | null) : null;
+          if (lastTilt && lastTilt !== card) {
+            lastTilt.style.setProperty('--rx', '0deg');
+            lastTilt.style.setProperty('--ry', '0deg');
+          }
+          lastTilt = card;
+          if (!card || reduced.matches) return;
+          const r = card.getBoundingClientRect();
+          const px = (e.clientX - r.left) / r.width;
+          const py = (e.clientY - r.top) / r.height;
+          card.style.setProperty('--rx', ((0.5 - py) * 8).toFixed(2) + 'deg');
+          card.style.setProperty('--ry', ((px - 0.5) * 10).toFixed(2) + 'deg');
+          card.style.setProperty('--gx', (px * 100).toFixed(1) + '%');
+          card.style.setProperty('--gy', (py * 100).toFixed(1) + '%');
+        });
+      });
+
+      // --- Scroll reveals: [data-reveal] fades up alone, [data-reveal-group] staggers its items ---
+      function setupReveals() {
+        if (reduced.matches) return;
+        const targets = document.querySelectorAll('[data-reveal]:not([data-obs]), [data-reveal-group]:not([data-obs])');
+        if (!targets.length) return;
+        const io = new IntersectionObserver(
+          (entries, obs) => {
+            for (const entry of entries) {
+              if (!entry.isIntersecting) continue;
+              obs.unobserve(entry.target);
+              const el = entry.target as HTMLElement;
+              const isGroup = el.hasAttribute('data-reveal-group');
+              animate(isGroup ? el.querySelectorAll('[data-reveal-item]') : el, {
+                opacity: [0, 1],
+                translateY: [24, 0],
+                duration: 750,
+                ease: 'outCubic',
+                delay: isGroup ? stagger(110) : Number(el.dataset.revealDelay ?? 0),
+              });
+            }
+          },
+          { rootMargin: '0px 0px -10% 0px' }
+        );
+        targets.forEach((el) => {
+          el.setAttribute('data-obs', '');
+          io.observe(el);
+        });
+      }
+
+      document.addEventListener('astro:page-load', setupReveals);
+      setupReveals();
+    </script>
+  </body>
+</html>
