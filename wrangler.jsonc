@@ -1,0 +1,11 @@
+// Static site on Cloudflare Workers: serve ./dist as assets, no bindings.
+// Without this file the build uses Cloudflare's generated Astro preset,
+// which assumes SSR and tries to provision a SESSION KV namespace.
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "portfolio",
+  "compatibility_date": "2026-06-12",
+  "assets": {
+    "directory": "./dist"
+  }
+}
