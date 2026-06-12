@@ -135,6 +135,60 @@ body {
   pointer-events: none;
 }
 
+/* ===== Tour route (about page): bus + stops driven by scroll JS ===== */
+.tour-progress {
+  transform: scaleY(0);
+  transform-origin: top;
+  will-change: transform;
+}
+.tour-bus {
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  will-change: transform;
+  pointer-events: none;
+}
+.tour-bus.is-on {
+  opacity: 1;
+}
+.tour-bus-body {
+  /* center the badge on the 1px route line */
+  margin-left: -16px;
+  margin-top: -16px;
+  transition: transform 0.3s ease;
+}
+.tour-stop {
+  transition:
+    border-color 0.35s ease,
+    background-color 0.35s ease,
+    box-shadow 0.35s ease;
+}
+[data-stop].is-visited .tour-stop {
+  border-color: oklch(76.9% 0.188 70.08); /* amber-500 */
+  background-color: #fffbeb; /* amber-50 */
+  box-shadow: 0 0 0 4px rgb(251 191 36 / 0.18);
+}
+/* stops wait in grey until the bus arrives — only when JS can flip them */
+@media (prefers-reduced-motion: no-preference) {
+  .js [data-stop] .tour-stop-name {
+    color: #a8a29e; /* stone-400 */
+    transition: color 0.35s ease;
+  }
+  .js [data-stop].is-visited .tour-stop-name {
+    color: #b45309; /* amber-700 */
+  }
+}
+
+/* ===== Gift-shop passport stamp ===== */
+.tour-stamp {
+  transform: rotate(-9deg);
+  background: color-mix(in srgb, var(--page-bg) 80%, transparent);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .js .tour-stamp {
+    opacity: 0;
+  }
+}
+
 /* ===== Front-desk receptionist (steps out when the bell rings) ===== */
 .receptionist {
   opacity: 0;

@@ -360,49 +360,11 @@ const chapterEmojis: Record<string, string> = {
 
 <script>
   import { animate, stagger, utils } from "animejs";
+  import { splitChars } from "../../scripts/split-text";
 
   const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   let scrollHandler: (() => void) | null = null;
-
-  // Wraps each grapheme in a span (Vietnamese diacritics stay intact),
-  // keeping words in nowrap spans so lines never break mid-word.
-  function splitChars(el: HTMLElement): NodeListOf<HTMLElement> {
-    const seg =
-      "Segmenter" in Intl
-        ? new Intl.Segmenter(undefined, { granularity: "grapheme" })
-        : null;
-    const graphemes = (s: string) =>
-      seg ? [...seg.segment(s)].map((x) => x.segment) : [...s];
-    const walk = (node: Node) => {
-      [...node.childNodes].forEach((child) => {
-        if (child.nodeType === Node.TEXT_NODE) {
-          const frag = document.createDocumentFragment();
-          for (const part of (child.textContent ?? "").split(/(\s+)/)) {
-            if (!part) continue;
-            if (/^\s+$/.test(part)) {
-              frag.append(document.createTextNode(" "));
-              continue;
-            }
-            const word = document.createElement("span");
-            word.className = "split-word";
-            for (const ch of graphemes(part)) {
-              const c = document.createElement("span");
-              c.className = "split-char";
-              c.textContent = ch;
-              word.append(c);
-            }
-            frag.append(word);
-          }
-          child.replaceWith(frag);
-        } else if (child.nodeType === Node.ELEMENT_NODE) {
-          walk(child);
-        }
-      });
-    };
-    walk(el);
-    return el.querySelectorAll(".split-char");
-  }
 
   function initHero(root: HTMLElement) {
     const h1 = root.querySelector<HTMLElement>("[data-split]");
@@ -695,16 +657,17 @@ const chapterEmojis: Record<string, string> = {
     const road = root.querySelector<HTMLElement>("[data-road]");
     const bellBtn = root.querySelector<HTMLElement>("[data-bell]");
     const car = root.querySelector<HTMLElement>("[data-car]");
+    const heroH1 = root.querySelector<HTMLElement>("h1[data-split]");
     if (!tl || !progress || reduced) return;
 
     const clamp01 = (v: number) => Math.min(1, Math.max(0, v));
     const BG_FROM = [250, 250, 249]; // stone-50
     const BG_TO = [247, 238, 220]; // aged paper
 
-    // The journey: gentle S-curves swaying through the content (cards cover
-    // the car), overshooting the column edges a bit — then a horizontal run
-    // on the Da Nang → Hoi An road, then down to crash into the front-desk
-    // bell. Waypoints are zigzag corners; buildPath rounds them into curves.
+    // The journey: a continuous cosine wave swaying through the content
+    // (cards cover the car), overshooting the column edges a bit — then a
+    // horizontal run on the Da Nang → Hoi An road, then down to crash into
+    // the front-desk bell. Remaining corners get rounded into curves below.
     interface Seg {
       x0: number;
       y0: number;
@@ -718,6 +681,7 @@ const chapterEmojis: Record<string, string> = {
     let pathW = 0;
     let pathH = 0;
     let pEnd = 1; // scroll progress at which the car reaches the bell
+    let pStart = 0; // (negative) progress at which the car leaves the hero
     let lastD = -1;
     let dirSign = 1;
     let crashArmed = true;
@@ -727,12 +691,41 @@ const chapterEmojis: Record<string, string> = {
       const lineRect = lineEl.getBoundingClientRect();
       const tlRect = tl.getBoundingClientRect();
       const H = lineEl.offsetHeight;
-      // overshoot past both content edges, bounded by the viewport margin
+      // overshoot past the left content edge, bounded by the viewport margin
       const over = Math.min(90, Math.max(20, tlRect.left - 105));
       const xL = tlRect.left - lineRect.left - over;
-      const xR = tlRect.right - lineRect.left + over;
-      const pts: [number, number][] = [[0, 0]];
+      const contentR = tlRect.right - lineRect.left;
+      // On the right the car should swing clearly PAST the cards, as far as
+      // the viewport allows (canvas is 200px wide, centered on the path).
+      const apexTarget = Math.min(
+        contentR + 170,
+        window.innerWidth - lineRect.left - 110,
+      );
+
+      const assemble = (xR: number) => {
+      // Waypoints: [x, y, maxCornerRadius?]. Swing corners are uncapped so
+      // the rounding below consumes nearly the whole segment (lazy sweeping
+      // sways, no visible straight runs); road/bell corners stay tight so
+      // the car actually drives the dashed road and parks level.
+      const pts: [number, number, number?][] = [];
+      // Prelude: the car waits beside the hero headline, then drives
+      // straight down to the top of the timeline (negative y = above the
+      // line element). Clamped so the canvas stays on screen on mobile.
+      if (heroH1) {
+        const hr = heroH1.getBoundingClientRect();
+        const hx = Math.max(hr.left - lineRect.left - 62, 55 - lineRect.left);
+        const hy = hr.top + hr.height / 2 - lineRect.top;
+        if (hy < -40) pts.push([hx, hy]);
+      }
+      pts.push([0, 0, 180]);
       let endY = H;
+
+      const pushSways = (swayH: number) => {
+        let lanes = Math.max(2, Math.round(swayH / 650));
+        if (lanes % 2 === 1) lanes += 1; // end the sway on the left side
+        for (let i = 1; i <= lanes; i++)
+          pts.push([i % 2 ? xR : xL, (swayH * i) / lanes]);
+      };
 
       if (road && bellBtn) {
         const rr = road.getBoundingClientRect();
@@ -743,26 +736,21 @@ const chapterEmojis: Record<string, string> = {
         const bellX = br.right - lineRect.left + 55; // park nose-first at the button's right edge
         const bellY = br.top + br.height / 2 - lineRect.top - 2;
         const zigH = Math.max(140, roadY - 160);
-        let lanes = Math.max(2, Math.round(zigH / 430));
-        if (lanes % 2 === 1) lanes += 1; // end the zigzag on the left side
-        for (let i = 1; i <= lanes; i++)
-          pts.push([i % 2 ? xR : xL, (zigH * i) / lanes]);
-        pts.push([roadL, roadY]); // swing in on the Da Nang side (left)
-        pts.push([roadR, roadY]); // the run toward Hoi An
-        pts.push([roadR, bellY]); // down the right-hand side
+        pushSways(zigH);
+        pts.push([roadL, roadY, 130]); // swing in on the Da Nang side (left)
+        pts.push([roadR, roadY, 130]); // the run toward Hoi An
+        pts.push([roadR, bellY, 130]); // down the right-hand side
         pts.push([bellX, bellY]); // turn left, crash into the bell from the right
         endY = bellY;
       } else {
-        // fallback: plain zigzag to the bottom
-        const lanes = Math.max(4, Math.round(H / 430));
-        for (let i = 1; i <= lanes; i++)
-          pts.push([i % 2 ? xR : xL, (H * i) / lanes]);
+        // fallback: sway all the way to the bottom
+        pushSways(H);
       }
 
       // Round every corner into a wide quadratic curve sampled as tiny
       // segments, so the car sways through gentle S-bends instead of
       // snapping at sharp angles. Endpoints (start, bell) stay exact.
-      const smooth: [number, number][] = [pts[0]];
+      const smooth: [number, number, number?][] = [pts[0]];
       for (let i = 1; i < pts.length - 1; i++) {
         const [px, py] = pts[i - 1];
         const [cx, cy] = pts[i];
@@ -770,7 +758,7 @@ const chapterEmojis: Record<string, string> = {
         const l1 = Math.hypot(cx - px, cy - py);
         const l2 = Math.hypot(nx - cx, ny - cy);
         if (!l1 || !l2) continue;
-        const r = Math.min(240, l1 * 0.45, l2 * 0.45);
+        const r = Math.min(pts[i][2] ?? 1e9, l1 * 0.48, l2 * 0.48);
         const ax = cx - ((cx - px) / l1) * r;
         const ay = cy - ((cy - py) / l1) * r;
         const bx = cx + ((nx - cx) / l2) * r;
@@ -805,6 +793,30 @@ const chapterEmojis: Record<string, string> = {
         totalLen += len;
       }
       pEnd = clamp01(endY / H) || 1;
+      };
+
+      // The corner rounding cuts well inside the waypoints, so the curve's
+      // real apex lands short of xR. Assemble, measure the shortfall against
+      // the target, push the right waypoints out by the deficit, repeat.
+      let xR = Math.max(contentR + over, apexTarget);
+      for (let pass = 0; pass < 3; pass++) {
+        assemble(xR);
+        let reach = 0;
+        for (const s of segs) reach = Math.max(reach, s.x0 + Math.max(0, s.dx));
+        const deficit = apexTarget - reach;
+        if (deficit < 6) break;
+        xR += deficit;
+      }
+      // Depart when the hero parking spot crosses mid-viewport — or, if it
+      // already sits above that at page load (short viewports), the moment
+      // scrolling starts. Both expressed in the line's progress space.
+      const startY = segs[0]?.y0 ?? 0;
+      const spotAtMid =
+        (startY + (lineRect.top - tlRect.top)) / tlRect.height;
+      const atLoad =
+        (window.innerHeight * 0.5 - (tlRect.top + window.scrollY)) /
+        tlRect.height;
+      pStart = Math.min(0, Math.max(spotAtMid, atLoad));
     };
 
     const pointAt = (d: number) => {
@@ -824,7 +836,10 @@ const chapterEmojis: Record<string, string> = {
       raf = 0;
       const vh = window.innerHeight;
       const rect = tl.getBoundingClientRect();
-      const p = clamp01((vh * 0.5 - rect.top) / rect.height);
+      // pRaw goes negative while the timeline is still below mid-viewport —
+      // that early range is exactly when the car drives its hero prelude
+      const pRaw = (vh * 0.5 - rect.top) / rect.height;
+      const p = clamp01(pRaw);
       progress.style.transform = `scaleY(${p})`;
       const bg = BG_FROM.map((c, i) => Math.round(c + (BG_TO[i] - c) * p));
       document.documentElement.style.setProperty(
@@ -840,8 +855,10 @@ const chapterEmojis: Record<string, string> = {
           pathH = h;
           buildPath();
         }
-        // the car finishes its route (bell crash) when the line tip reaches the bell
-        const d = Math.min(totalLen, (p / pEnd) * totalLen);
+        // car progress runs from pStart (hero spot at mid-viewport) to pEnd
+        // (line tip reaches the bell) — earlier than the line's own 0..1
+        const d =
+          totalLen * clamp01((pRaw - pStart) / (pEnd - pStart || 1));
         const pos = pointAt(d);
         // scroll direction: reversing makes the car turn around and drive back
         if (lastD >= 0 && Math.abs(d - lastD) > 0.8)
@@ -856,7 +873,9 @@ const chapterEmojis: Record<string, string> = {
         lastD = d;
         car.style.transform = `translate3d(${pos.x.toFixed(1)}px, ${pos.y.toFixed(1)}px, 0)`;
         car3d?.update(pos.ang + (dirSign < 0 ? 180 : 0), d);
-        car.classList.toggle("tl-car-on", p > 0.005);
+        // visible as soon as the 3D car exists — it waits beside the hero
+        // headline before the journey starts (no flash of empty canvas)
+        car.classList.toggle("tl-car-on", !!car3d);
       }
     };
     const onScroll = () => {
@@ -884,7 +903,9 @@ const chapterEmojis: Record<string, string> = {
               // WebGL unavailable: the journey continues without the car
             });
         },
-        { rootMargin: "800px 0px" },
+        // generous margin: the car now parks beside the hero headline, so
+        // three.js should be ready right after the page settles
+        { rootMargin: "1600px 0px" },
       );
       io.observe(tl);
     }

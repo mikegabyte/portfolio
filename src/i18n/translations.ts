@@ -2,15 +2,15 @@ export type Lang = 'en' | 'vi';
 
 export const langs: Lang[] = ['en', 'vi'];
 
-/** Prefix a root-relative path for the given language. */
+/** Prefix a root-relative path for the given language. Vietnamese is the default locale at the root. */
 export function localizePath(lang: Lang, path: string): string {
-  return lang === 'vi' ? (path === '/' ? '/vi/' : `/vi${path}`) : path;
+  return lang === 'en' ? (path === '/' ? '/en/' : `/en${path}`) : path;
 }
 
 export const t = {
   en: {
     meta: {
-      title: 'Lê Minh Ý — Frontend Developer',
+      title: 'Mikegabyte — Frontend Developer (Vue, React, TypeScript)',
       description:
         'Frontend developer (Vue, React, TypeScript) building web tools for marketing & content. Former tour guide — now I guide users through UIs.',
     },
@@ -64,7 +64,7 @@ export const t = {
         hotel: {
           label: '⏪ chapter 01 — first job',
           title: 'The hotel lobby',
-          text: 'First job out of university: hotel receptionist. Reading people fast, staying calm in chaos, and the ancient art of saying "no" so politely it sounds like "yes".',
+          text: "First job out of university: hotel receptionist. Ten years later I still do exactly that — listen to someone describe a problem in a roundabout way, translate it into something fixable, then report back in a pleasant tone. Just through a screen now.",
           bellHint: 'ring for service',
           greet: 'Hi there — how can I help? 👋',
         },
@@ -81,10 +81,12 @@ export const t = {
     },
     projects: {
       title: 'Projects — mikegabyte',
+      description:
+        'Side projects and professional work by Mikegabyte: SEO Audit AI, a browser push-up counter, WordPress martech tools and more — each with source code and a build log.',
       kicker: '// projects',
       heading: "Things I'm building",
       introHtml:
-        'A mix of side projects and professional work. Side projects ship with source on GitHub and a build log on the <a href="/blog" class="text-amber-700 underline-offset-4 hover:underline">blog</a> — including the dead ends.',
+        'A mix of side projects and professional work. Side projects ship with source on GitHub and a build log on the <a href="/en/blog" class="text-amber-700 underline-offset-4 hover:underline">blog</a> — including the dead ends.',
     },
     about: {
       title: 'The Tour — mikegabyte',
@@ -134,10 +136,13 @@ export const t = {
       ],
       giftTitle: 'end of tour — gift shop',
       giftHtml:
-        'No fridge magnets, sorry. But you can grab <a href="/cv.pdf" class="text-amber-700 underline underline-offset-4">my CV</a>, browse <a href="/projects" class="text-amber-700 underline underline-offset-4">the projects</a>, or <a href="mailto:le.minh.y.95@gmail.com" class="text-amber-700 underline underline-offset-4">email the guide</a> directly. Five-star reviews also accepted.',
+        'No fridge magnets, sorry. But you can grab <a href="/cv.pdf" class="text-amber-700 underline underline-offset-4">my CV</a>, browse <a href="/en/projects" class="text-amber-700 underline underline-offset-4">the projects</a>, or <a href="mailto:le.minh.y.95@gmail.com" class="text-amber-700 underline underline-offset-4">email the guide</a> directly. Five-star reviews also accepted.',
+      giftStamp: 'tour complete ★★★★★',
     },
     blog: {
       title: 'Blog — mikegabyte',
+      description:
+        "Build logs from Mikegabyte — notes on Vue, React, TypeScript and AI tooling: what worked, what didn't, and what the AI confidently got wrong.",
       kicker: '// blog',
       heading: 'Build logs',
       introHtml:
@@ -149,9 +154,9 @@ export const t = {
   },
   vi: {
     meta: {
-      title: 'Lê Minh Ý — Lập trình viên Frontend',
+      title: 'Mikegabyte — Lập trình viên Frontend (Vue, React, TypeScript)',
       description:
-        'Lập trình viên frontend (Vue, React, TypeScript) xây công cụ web cho marketing & content. Cựu hướng dẫn viên du lịch — giờ dẫn người dùng đi qua giao diện.',
+        'Dev frontend (Vue, React, TypeScript) chuyên làm công cụ web cho marketing & content. Từng là hướng dẫn viên du lịch — giờ chuyển qua dẫn người dùng đi trong giao diện.',
     },
     nav: { home: 'trang chủ', projects: 'dự án', tour: 'chuyến tour', blog: 'blog', cv: 'cv ↓' },
     footer: {
@@ -167,13 +172,13 @@ export const t = {
     },
     home: {
       kicker: '// lập trình viên frontend — vue · react · typescript',
-      titleHtml: 'Tôi xây công cụ web cho <span class="text-amber-600">marketing &amp; content</span>.',
+      titleHtml: 'Mình làm công cụ web cho <span class="text-amber-600">marketing &amp; content</span>.',
       intro:
-        'Cựu hướng dẫn viên du lịch quốc tế chuyển nghề lập trình. Hơn 6 năm làm UI — gần đây là WordPress plugin xây từ đầu đến cuối, ad tech và quy trình làm việc cùng AI. Ngày xưa tôi dẫn khách đi tham quan thành phố; giờ tôi dẫn người dùng đi qua giao diện.',
+        'Từng là hướng dẫn viên du lịch quốc tế, sau chuyển qua code. Hơn 6 năm làm UI — dạo gần đây chủ yếu là WordPress plugin tự xây từ A tới Z, ad tech và làm việc chung với AI. Hồi xưa dẫn khách đi chơi khắp nơi, giờ thì dẫn người dùng đi trong giao diện.',
       ctaProjects: 'xem dự án',
-      ctaTour: 'làm một tour 🧭',
-      scrollHint: 'cuộn để tua ngược câu chuyện',
-      soundHint: '🔊 bấm vào trang một cái — để chút nữa nghe được chuông',
+      ctaTour: 'đi tour một vòng 🧭',
+      scrollHint: 'kéo xuống để tua ngược câu chuyện',
+      soundHint: '🔊 bấm đại vô trang một cái — lát nữa mới nghe được tiếng chuông',
       qcCmd: '$ npm run test:e2e',
       qcLines: [
         '✓ form đặt phòng — pass',
@@ -181,49 +186,51 @@ export const t = {
         '✓ luồng thanh toán — pass',
         '✗ edge case thanh toán — dính bug',
       ],
-      qcNote: '// xem dev sửa bug mới là phần hay nhất',
+      qcNote: '// ngồi xem dev sửa bug mới là khúc hay nhất',
       timeline: {
         projects: {
           label: 'chương 04 — hiện tại',
-          title: 'Những thứ tôi ship',
-          text: 'Side project xây từ đầu đến cuối — source trên GitHub, ngõ cụt ghi lại trên blog — bên cạnh công việc chuyên môn dạy tôi cách traffic và content thật sự vận hành.',
+          title: 'Những thứ mình ship',
+          text: 'Side project tự làm từ A tới Z — source để trên GitHub, đâm vô ngõ cụt nào cũng ghi lại trên blog — cộng thêm mấy dự án công ty dạy mình hiểu traffic với content ngoài đời chạy kiểu gì.',
         },
         qc: {
           label: '⏪ chương 03 — cú rẽ',
           title: 'Phòng QC',
-          text: 'Đại dịch xoá sổ ngành du lịch sau một đêm. Tôi học lại từ đầu và kiếm sống bằng nghề "phá" phần mềm — cho đến khi nhìn dev sửa những bug tôi tìm ra còn thú vị hơn việc tìm ra chúng. Thế là tôi tự học code: buổi tối, cuối tuần, mọi giờ rảnh.',
+          text: 'Dịch ập tới, ngành du lịch đứng hình sau một đêm. Mình đi học QC rồi kiếm sống bằng nghề "phá" phần mềm — phá riết mới thấy ngồi xem dev sửa mấy con bug mình tìm ra rồi lại ra những con bug khác, chỉ muốn "để tau làm cho". Vậy là tự học code: tối, cuối tuần, rảnh giờ nào học giờ đó.',
         },
         tour: {
           label: '⏪ chương 02 — trên những cung đường',
           title: 'Chuyến xe tour',
-          text: 'Hướng dẫn viên du lịch quốc tế ở Đà Nẵng: bốn mươi người lạ, một chiếc micro, và không có chỗ cho sự nhàm chán. Kể chuyện dưới áp lực, bằng tiếng Anh, mỗi ngày — trại huấn luyện kỹ năng mềm khắc nghiệt nhất.',
+          text: 'Hướng dẫn viên du lịch quốc tế ở Đà Nẵng: bốn chục khách lạ, một cái micro, và tuyệt đối không được nhạt. Ngày nào cũng kể chuyện bằng tiếng Anh dưới áp lực — lớp luyện kỹ năng mềm khó nhằn nhất mình từng qua.',
           roadFrom: 'đà nẵng',
           roadTo: 'hội an',
         },
         hotel: {
           label: '⏪ chương 01 — việc đầu tiên',
           title: 'Sảnh khách sạn',
-          text: 'Công việc đầu tiên sau đại học: lễ tân khách sạn. Đọc vị con người thật nhanh, giữ bình tĩnh giữa hỗn loạn, và nghệ thuật cổ xưa của việc nói "không" lịch sự đến mức nghe như "có".',
+          text: 'Việc đầu tiên sau đại học: lễ tân khách sạn. Mười năm sau mình vẫn làm đúng việc đó — lắng nghe người ta mô tả vấn đề lung tung, dịch ra thứ xử lý được, rồi báo lại bằng giọng dễ chịu. Chỉ khác là giờ qua màn hình.',
           bellHint: 'bấm chuông gọi lễ tân',
           greet: 'Xin chào, mình giúp gì được ạ? 👋',
         },
         origin: {
           label: '⏮ nơi mọi thứ bắt đầu',
           title: 'Vẫn nghề cũ, chỉ đổi giao diện.',
-          text: 'Ngày xưa tôi dẫn khách đi qua thành phố; giờ tôi dẫn người dùng đi qua giao diện. Mọi thứ ở giữa chỉ là học công cụ mới. Bản đầy đủ có sáu điểm dừng và một quầy lưu niệm.',
-          cta: 'làm tour đầy đủ 🧭',
+          text: 'Hồi xưa mình dẫn khách đi vòng vòng thành phố; giờ dẫn người dùng đi trong giao diện. Khúc giữa chỉ là học thêm đồ nghề mới thôi. Bản full có sáu điểm dừng với một quầy lưu niệm.',
+          cta: 'đi tour bản full 🧭',
         },
       },
       contact: 'liên hệ',
       contactText:
-        'Đang mở với các vị trí frontend (Vue/React) — remote hoặc tại Đà Nẵng — và những bài toán thú vị ở giao điểm web, marketing và AI.',
+        'Đang mở với mấy vị trí frontend (Vue/React) — remote hoặc ở Đà Nẵng — và mấy bài toán hay ho dính tới web, marketing và AI.',
     },
     projects: {
       title: 'Dự án — mikegabyte',
+      description:
+        'Side project và công việc chuyên môn của Mikegabyte: SEO Audit AI, app đếm hít đất chạy trong trình duyệt, công cụ martech WordPress — kèm source code và build log.',
       kicker: '// dự án',
       heading: 'Những thứ tôi đang xây',
       introHtml:
-        'Trộn giữa side project và công việc chuyên môn. Side project nào cũng có source trên GitHub và build log trên <a href="/vi/blog" class="text-amber-700 underline-offset-4 hover:underline">blog</a> — kể cả những ngõ cụt.',
+        'Trộn giữa side project và công việc chuyên môn. Side project nào cũng có source trên GitHub và build log trên <a href="/blog" class="text-amber-700 underline-offset-4 hover:underline">blog</a> — kể cả những ngõ cụt.',
     },
     about: {
       title: 'Chuyến tour — mikegabyte',
@@ -273,10 +280,13 @@ export const t = {
       ],
       giftTitle: 'cuối tour — quầy lưu niệm',
       giftHtml:
-        'Không có nam châm tủ lạnh, xin lỗi nhé. Nhưng bạn có thể lấy <a href="/cv.pdf" class="text-amber-700 underline underline-offset-4">CV của tôi</a>, xem <a href="/vi/projects" class="text-amber-700 underline underline-offset-4">các dự án</a>, hoặc <a href="mailto:le.minh.y.95@gmail.com" class="text-amber-700 underline underline-offset-4">email thẳng cho hướng dẫn viên</a>. Nhận cả review 5 sao.',
+        'Không có nam châm tủ lạnh, xin lỗi nhé. Nhưng bạn có thể lấy <a href="/cv.pdf" class="text-amber-700 underline underline-offset-4">CV của mình</a>, xem <a href="/projects" class="text-amber-700 underline underline-offset-4">các dự án</a>, hoặc <a href="mailto:le.minh.y.95@gmail.com" class="text-amber-700 underline underline-offset-4">email thẳng cho hướng dẫn viên</a>. Nhận cả review 5 sao.',
+      giftStamp: 'đã đi hết tour ★★★★★',
     },
     blog: {
       title: 'Blog — mikegabyte',
+      description:
+        'Nhật ký build của Mikegabyte — ghi chép về Vue, React, TypeScript và công cụ AI: cái gì chạy, cái gì không, và AI đã tự tin sai ở đâu.',
       kicker: '// blog',
       heading: 'Nhật ký build',
       introHtml:

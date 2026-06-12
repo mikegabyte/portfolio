@@ -11,35 +11,204 @@ const tt = t[lang].about;
 ---
 
 <Layout lang={lang} title={tt.title} description={tt.description}>
-  <section class="py-6">
-    <p class="font-mono text-sm text-amber-600" data-reveal>{tt.kicker}</p>
-    <h1 class="mt-3 text-3xl font-bold leading-tight text-stone-900 sm:text-4xl" data-reveal>{tt.heading}</h1>
-    <p class="mt-4 max-w-xl leading-relaxed text-stone-600" data-reveal>{tt.intro}</p>
-  </section>
+  <div data-tour-page>
+    <section class="py-6">
+      <p class="font-mono text-sm text-amber-600" data-reveal>{tt.kicker}</p>
+      <h1 class="mt-3 text-3xl font-bold leading-tight text-stone-900 sm:text-4xl" data-split>{tt.heading}</h1>
+      <p class="mt-4 max-w-xl leading-relaxed text-stone-600" data-reveal data-reveal-delay="350">{tt.intro}</p>
+    </section>
 
-  <section class="relative py-8">
-    <div class="absolute bottom-8 left-[1.05rem] top-8 w-px border-l border-dashed border-stone-300"></div>
-    <ol class="space-y-10">
-      {
-        tt.stops.map((stop) => (
-          <li class="relative flex gap-5" data-reveal>
-            <div class="z-[1] flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-stone-300 bg-[var(--page-bg)] text-lg">
-              {stop.emoji}
-            </div>
-            <div>
-              <h2 class="font-mono text-sm font-semibold uppercase tracking-wide text-amber-700">{stop.name}</h2>
-              <p class="mt-2 max-w-xl leading-relaxed text-stone-600">{stop.story}</p>
-            </div>
-          </li>
-        ))
-      }
-    </ol>
-  </section>
+    <!-- The route: a dashed road the little bus drives down as you scroll.
+         Stops light up when the bus reaches them. -->
+    <section class="relative py-8" data-route>
+      <div class="absolute bottom-8 left-[1.05rem] top-8 w-px border-l border-dashed border-stone-300" data-route-line>
+        <div
+          class="tour-progress absolute -left-px bottom-0 top-0 w-px bg-gradient-to-b from-amber-500 to-amber-300"
+          data-route-progress
+        >
+        </div>
+        <div class="tour-bus absolute left-0 top-0 z-[2]" data-bus aria-hidden="true">
+          <span
+            class="tour-bus-body flex h-8 w-8 items-center justify-center rounded-full border-2 border-amber-500 bg-amber-100 text-base shadow-md"
+            data-bus-body>🚌</span
+          >
+        </div>
+      </div>
+      <ol class="space-y-10">
+        {
+          tt.stops.map((stop) => (
+            <li class="relative flex gap-5" data-reveal data-stop>
+              <div
+                class="tour-stop z-[1] flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-stone-300 bg-[var(--page-bg)] text-lg"
+                data-stop-marker
+              >
+                {stop.emoji}
+              </div>
+              <div>
+                <h2 class="tour-stop-name font-mono text-sm font-semibold uppercase tracking-wide text-amber-700">
+                  {stop.name}
+                </h2>
+                <p class="mt-2 max-w-xl leading-relaxed text-stone-600">{stop.story}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+    </section>
 
-  <section class="py-8">
-    <div class="rounded-lg border border-amber-500/30 bg-amber-400/10 p-6" data-reveal>
-      <h2 class="font-mono text-sm uppercase tracking-widest text-amber-700">{tt.giftTitle}</h2>
-      <p class="mt-3 max-w-xl leading-relaxed text-stone-700" set:html={tt.giftHtml} />
-    </div>
-  </section>
+    <section class="py-8">
+      <div class="relative rounded-lg border border-amber-500/30 bg-amber-400/10 p-6" data-reveal data-gift>
+        <h2 class="font-mono text-sm uppercase tracking-widest text-amber-700">{tt.giftTitle}</h2>
+        <p class="mt-3 max-w-xl leading-relaxed text-stone-700" set:html={tt.giftHtml} />
+        <!-- passport stamp: slams in once the gift shop scrolls into view -->
+        <span
+          class="tour-stamp absolute -top-3 right-5 rounded border-2 border-amber-600/60 px-2.5 py-1 font-mono text-[10px] font-semibold uppercase tracking-widest text-amber-700"
+          data-stamp
+          aria-hidden="true">{tt.giftStamp}</span
+        >
+      </div>
+    </section>
+  </div>
 </Layout>
+
+<script>
+  import { animate, stagger, utils } from 'animejs';
+  import { splitChars } from '../../scripts/split-text';
+
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  let scrollHandler: (() => void) | null = null;
+  let settleTimer: ReturnType<typeof setTimeout> | undefined;
+
+  function initHeading(root: HTMLElement) {
+    const h1 = root.querySelector<HTMLElement>('[data-split]');
+    if (!h1 || reduced) return;
+    const chars = splitChars(h1);
+    utils.set(chars, { opacity: 0, translateY: '0.6em' });
+    h1.style.opacity = '1';
+    animate(chars, {
+      opacity: [0, 1],
+      translateY: ['0.6em', '0em'],
+      duration: 850,
+      ease: 'outExpo',
+      delay: stagger(16),
+    });
+  }
+
+  // Scroll-linked route: the progress line draws itself, the bus drives down
+  // it leaning into the motion, and each stop pops awake as the bus arrives
+  // (and dims again if you drive back up — scrolling rewinds here too).
+  function initRoute(root: HTMLElement) {
+    const route = root.querySelector<HTMLElement>('[data-route]');
+    const line = root.querySelector<HTMLElement>('[data-route-line]');
+    const progress = root.querySelector<HTMLElement>('[data-route-progress]');
+    const bus = root.querySelector<HTMLElement>('[data-bus]');
+    const busBody = root.querySelector<HTMLElement>('[data-bus-body]');
+    const stops = [...root.querySelectorAll<HTMLElement>('[data-stop]')];
+    if (!route || !line || !progress || !bus || !busBody || !stops.length || reduced) return;
+
+    const markers = stops.map((s) => s.querySelector<HTMLElement>('[data-stop-marker]'));
+    const visited = stops.map(() => false);
+    let stopYs: number[] = [];
+    let lineH = 0;
+    let lastY = -1;
+
+    const measure = () => {
+      const lr = line.getBoundingClientRect();
+      lineH = lr.height;
+      stopYs = markers.map((m) => {
+        if (!m) return 0;
+        const r = m.getBoundingClientRect();
+        return r.top + r.height / 2 - lr.top;
+      });
+    };
+
+    let raf = 0;
+    const frame = () => {
+      raf = 0;
+      const lr = line.getBoundingClientRect();
+      if (lr.height !== lineH) measure();
+      const p = Math.min(1, Math.max(0, (window.innerHeight * 0.5 - lr.top) / lr.height));
+      progress.style.transform = `scaleY(${p})`;
+
+      const y = p * lineH;
+      // lean into the motion; settle upright shortly after scrolling stops
+      const lean = lastY < 0 ? 0 : Math.max(-16, Math.min(16, (y - lastY) * 1.3));
+      lastY = y;
+      bus.style.transform = `translate3d(0, ${y.toFixed(1)}px, 0)`;
+      busBody.style.transform = `rotate(${lean.toFixed(1)}deg)`;
+      clearTimeout(settleTimer);
+      settleTimer = setTimeout(() => {
+        busBody.style.transform = 'rotate(0deg)';
+      }, 160);
+      bus.classList.add('is-on');
+
+      stopYs.forEach((sy, i) => {
+        const reached = y >= sy - 14;
+        if (reached === visited[i]) return;
+        visited[i] = reached;
+        stops[i].classList.toggle('is-visited', reached);
+        if (reached && markers[i]) {
+          animate(markers[i]!, {
+            keyframes: [{ scale: 1 }, { scale: 1.3 }, { scale: 1 }],
+            duration: 480,
+            ease: 'inOutSine',
+          });
+        }
+      });
+    };
+    const onScroll = () => {
+      if (!raf) raf = requestAnimationFrame(frame);
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll, { passive: true });
+    measure();
+    frame();
+    scrollHandler = onScroll;
+  }
+
+  // The gift-shop stamp slams down like a passport stamp once the card is in view.
+  function initStamp(root: HTMLElement) {
+    const gift = root.querySelector<HTMLElement>('[data-gift]');
+    const stamp = root.querySelector<HTMLElement>('[data-stamp]');
+    if (!gift || !stamp || reduced) return;
+    const io = new IntersectionObserver(
+      (entries, obs) => {
+        if (!entries.some((e) => e.isIntersecting)) return;
+        obs.disconnect();
+        animate(stamp, {
+          opacity: [0, 1],
+          scale: [2.4, 1],
+          rotate: ['-2deg', '-9deg'],
+          duration: 420,
+          delay: 450,
+          ease: 'inQuad',
+        });
+      },
+      { threshold: 0.6 },
+    );
+    io.observe(gift);
+  }
+
+  function destroy() {
+    if (scrollHandler) {
+      window.removeEventListener('scroll', scrollHandler);
+      window.removeEventListener('resize', scrollHandler);
+      scrollHandler = null;
+    }
+    clearTimeout(settleTimer);
+  }
+
+  function init() {
+    const root = document.querySelector<HTMLElement>('[data-tour-page]');
+    if (!root || root.hasAttribute('data-init')) return;
+    root.setAttribute('data-init', '');
+    initHeading(root);
+    initRoute(root);
+    initStamp(root);
+  }
+
+  document.addEventListener('astro:page-load', init);
+  document.addEventListener('astro:before-swap', destroy);
+  init();
+</script>

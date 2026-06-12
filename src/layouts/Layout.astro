@@ -9,15 +9,32 @@ interface Props {
   description?: string;
 }
 
-const { lang = 'en', title, description } = Astro.props;
+const { lang = 'vi', title, description } = Astro.props;
 const tt = t[lang];
 const pageTitle = title ?? tt.meta.title;
 const pageDescription = description ?? tt.meta.description;
 
 const current = Astro.url.pathname;
 // Path of this page in the other language
-const enPath = current.replace(/^\/vi(\/|$)/, '/') || '/';
-const viPath = localizePath('vi', enPath);
+const viPath = current.replace(/^\/en(\/|$)/, '/') || '/';
+const enPath = localizePath('en', viPath);
+
+// Absolute URLs — hreflang/canonical/og must not be relative
+const site = Astro.site!;
+const canonicalURL = new URL(current, site);
+const enURL = new URL(enPath, site);
+const viURL = new URL(viPath, site);
+const ogImage = new URL('/og-image.jpg', site);
+
+const personLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: 'Mikegabyte',
+  url: site.toString(),
+  jobTitle: 'Frontend Developer',
+  knowsAbout: ['Vue', 'React', 'TypeScript', 'Frontend Development', 'Marketing Technology'],
+  sameAs: ['https://github.com/mikegabyte'],
+});
 
 const nav = [
   { href: localizePath(lang, '/'), label: tt.nav.home },
@@ -29,7 +46,7 @@ const nav = [
 const isActive = (href: string) =>
   current === href ||
   current === href + '/' ||
-  (href !== '/' && href !== '/vi/' && current.startsWith(href));
+  (href !== '/' && href !== '/en/' && current.startsWith(href));
 ---
 
 <!doctype html>
@@ -37,33 +54,52 @@ const isActive = (href: string) =>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <meta name="theme-color" content="#fafaf9" />
     <title>{pageTitle}</title>
     <meta name="description" content={pageDescription} />
+    <meta name="author" content="Mikegabyte" />
+    <link rel="canonical" href={canonicalURL} />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="mikegabyte" />
+    <meta property="og:url" content={canonicalURL} />
     <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={pageDescription} />
-    <link rel="alternate" hreflang="en" href={enPath} />
-    <link rel="alternate" hreflang="vi" href={viPath} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content={lang === 'vi' ? 'vi_VN' : 'en_US'} />
+    <meta property="og:locale:alternate" content={lang === 'vi' ? 'en_US' : 'vi_VN'} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={pageDescription} />
+    <meta name="twitter:image" content={ogImage} />
+    <link rel="alternate" hreflang="en" href={enURL} />
+    <link rel="alternate" hreflang="vi" href={viURL} />
+    <link rel="alternate" hreflang="x-default" href={viURL} />
+    <script type="application/ld+json" set:html={personLd} />
     <ClientRouter />
     <script is:inline>
       // Marks JS availability so CSS can pre-hide elements that animate in.
       document.documentElement.classList.add('js');
     </script>
     <script is:inline>
-      // First visit only: visitors whose browser speaks Vietnamese get /vi/.
+      // First visit only: visitors whose browser does NOT speak Vietnamese get /en/.
       // An explicit choice via the lang switcher is stored and always wins.
       (function () {
         var KEY = 'pref-lang';
         var path = location.pathname;
-        var onVi = path === '/vi' || path.indexOf('/vi/') === 0;
+        var onEn = path === '/en' || path.indexOf('/en/') === 0;
         if (localStorage.getItem(KEY)) return;
         var prefs = navigator.languages || [navigator.language || ''];
         var wantsVi = prefs.some(function (l) {
           return l && l.toLowerCase().indexOf('vi') === 0;
         });
         localStorage.setItem(KEY, wantsVi ? 'vi' : 'en');
-        if (wantsVi && !onVi) {
-          location.replace('/vi' + (path === '/' ? '/' : path));
+        if (!wantsVi && !onEn) {
+          location.replace('/en' + (path === '/' ? '/' : path));
         }
       })();
     </script>
@@ -102,16 +138,6 @@ const isActive = (href: string) =>
             </a>
             <span class="flex items-center gap-1 border-l border-stone-200 pl-3 text-xs sm:pl-4">
               <a
-                href={enPath}
-                data-set-lang="en"
-                class:list={[
-                  'transition-colors hover:text-amber-700',
-                  lang === 'en' ? 'font-semibold text-amber-700' : 'text-stone-400',
-                ]}
-                aria-label="English">en</a
-              >
-              <span class="text-stone-300">/</span>
-              <a
                 href={viPath}
                 data-set-lang="vi"
                 class:list={[
@@ -119,6 +145,16 @@ const isActive = (href: string) =>
                   lang === 'vi' ? 'font-semibold text-amber-700' : 'text-stone-400',
                 ]}
                 aria-label="Tiếng Việt">vi</a
+              >
+              <span class="text-stone-300">/</span>
+              <a
+                href={enPath}
+                data-set-lang="en"
+                class:list={[
+                  'transition-colors hover:text-amber-700',
+                  lang === 'en' ? 'font-semibold text-amber-700' : 'text-stone-400',
+                ]}
+                aria-label="English">en</a
               >
             </span>
           </div>

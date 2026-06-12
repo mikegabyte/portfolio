@@ -7,7 +7,7 @@ series: "Building a PMS SaaS"
 seriesPart: 2
 ---
 
-In [Part 1](/blog/building-a-pms-saas-part-1-the-decision) I decided to turn a shelved client POC into a product I own. The first real engineering step wasn't a feature — it was reading my own code as an attacker would, because a POC for one trusted business and a SaaS holding many businesses' data are not the same program.
+In [Part 1](/en/blog/building-a-pms-saas-part-1-the-decision) I decided to turn a shelved client POC into a product I own. The first real engineering step wasn't a feature — it was reading my own code as an attacker would, because a POC for one trusted business and a SaaS holding many businesses' data are not the same program.
 
 I found seven things. Two of them were bad. Here's the honest list.
 

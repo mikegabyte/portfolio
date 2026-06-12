@@ -7,7 +7,7 @@ series: "Building a PMS SaaS"
 seriesPart: 2
 ---
 
-Ở [Phần 1](/vi/blog/building-a-pms-saas-part-1-the-decision) mình quyết định biến một POC khách hàng đã xếp xó thành một sản phẩm mình sở hữu. Bước kỹ thuật thực sự đầu tiên không phải một tính năng — mà là đọc code của chính mình bằng con mắt của kẻ tấn công, vì một POC cho một doanh nghiệp đáng tin và một SaaS giữ dữ liệu của nhiều doanh nghiệp không phải cùng một chương trình.
+Ở [Phần 1](/blog/building-a-pms-saas-part-1-the-decision) mình quyết định biến một POC khách hàng đã xếp xó thành một sản phẩm mình sở hữu. Bước kỹ thuật thực sự đầu tiên không phải một tính năng — mà là đọc code của chính mình bằng con mắt của kẻ tấn công, vì một POC cho một doanh nghiệp đáng tin và một SaaS giữ dữ liệu của nhiều doanh nghiệp không phải cùng một chương trình.
 
 Mình tìm thấy bảy thứ. Hai trong số đó tệ. Đây là danh sách thật thà.
 
