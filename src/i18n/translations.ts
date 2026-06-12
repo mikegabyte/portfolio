@@ -136,7 +136,7 @@ export const t = {
       ],
       giftTitle: 'end of tour — gift shop',
       giftHtml:
-        'No fridge magnets, sorry. But you can grab <a href="/cv.pdf" class="text-amber-700 underline underline-offset-4">my CV</a>, browse <a href="/en/projects" class="text-amber-700 underline underline-offset-4">the projects</a>, or <a href="mailto:le.minh.y.95@gmail.com" class="text-amber-700 underline underline-offset-4">email the guide</a> directly. Five-star reviews also accepted.',
+        'No fridge magnets, sorry. But you can grab <a href="/cv.pdf" class="text-amber-700 underline underline-offset-4">my CV</a>, browse <a href="/en/projects" class="text-amber-700 underline underline-offset-4">the projects</a>, or <a href="mailto:leminhy969@gmail.com" class="text-amber-700 underline underline-offset-4">email the guide</a> directly. Five-star reviews also accepted.',
       giftStamp: 'tour complete ★★★★★',
     },
     blog: {
@@ -280,7 +280,7 @@ export const t = {
       ],
       giftTitle: 'cuối tour — quầy lưu niệm',
       giftHtml:
-        'Không có nam châm tủ lạnh, xin lỗi nhé. Nhưng bạn có thể lấy <a href="/cv.pdf" class="text-amber-700 underline underline-offset-4">CV của mình</a>, xem <a href="/projects" class="text-amber-700 underline underline-offset-4">các dự án</a>, hoặc <a href="mailto:le.minh.y.95@gmail.com" class="text-amber-700 underline underline-offset-4">email thẳng cho hướng dẫn viên</a>. Nhận cả review 5 sao.',
+        'Không có nam châm tủ lạnh, xin lỗi nhé. Nhưng bạn có thể lấy <a href="/cv.pdf" class="text-amber-700 underline underline-offset-4">CV của mình</a>, xem <a href="/projects" class="text-amber-700 underline underline-offset-4">các dự án</a>, hoặc <a href="mailto:leminhy969@gmail.com" class="text-amber-700 underline underline-offset-4">email thẳng cho hướng dẫn viên</a>. Nhận cả review 5 sao.',
       giftStamp: 'đã đi hết tour ★★★★★',
     },
     blog: {
