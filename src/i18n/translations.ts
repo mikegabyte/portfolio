@@ -10,9 +10,9 @@ export function localizePath(lang: Lang, path: string): string {
 export const t = {
   en: {
     meta: {
-      title: 'Mikegabyte — Frontend Developer (Vue, React, TypeScript)',
+      title: 'Mikegabyte — Frontend Developer (Vue, React, WordPress)',
       description:
-        'Frontend developer (Vue, React, TypeScript) building web tools for marketing & content. Former tour guide — now I guide users through UIs.',
+        'Frontend developer (Vue, React, WordPress) building web tools for marketing & content. Former tour guide — now I guide users through UIs.',
     },
     nav: { home: 'home', projects: 'projects', tour: 'the tour', blog: 'blog', cv: 'cv ↓' },
     footer: {
@@ -154,9 +154,9 @@ export const t = {
   },
   vi: {
     meta: {
-      title: 'Mikegabyte — Lập trình viên Frontend (Vue, React, TypeScript)',
+      title: 'Mikegabyte | Frontend Developer: Vue, React, WordPress',
       description:
-        'Dev frontend (Vue, React, TypeScript) chuyên làm công cụ web cho marketing & content. Từng là hướng dẫn viên du lịch — giờ chuyển qua dẫn người dùng đi trong giao diện.',
+        'Dev frontend (Vue, React, WordPress) chuyên làm công cụ web cho marketing & content. Từ hướng dẫn viên du lịch, tôi dẫn người dùng đi trong giao diện.',
     },
     nav: { home: 'trang chủ', projects: 'dự án', tour: 'hành trình', blog: 'blog', cv: 'cv ↓' },
     footer: {

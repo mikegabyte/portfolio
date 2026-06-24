@@ -8,7 +8,7 @@ const browser = await puppeteer.launch({
 });
 const page = await browser.newPage();
 await page.setViewport({ width: 1280, height: 900 });
-await page.goto('http://localhost:4322/vi/', { waitUntil: 'networkidle0' });
+await page.goto('http://localhost:4322/', { waitUntil: 'networkidle0' });
 await new Promise((r) => setTimeout(r, 1500));
 
 const height = await page.evaluate(() => document.body.scrollHeight);

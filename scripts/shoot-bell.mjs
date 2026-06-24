@@ -2,7 +2,7 @@
 // stepping out to greet (click path; the car-crash path reuses the same code).
 import puppeteer from 'puppeteer-core';
 
-const url = process.argv[2] ?? 'http://localhost:4322/vi/';
+const url = process.argv[2] ?? 'http://localhost:4322/';
 const browser = await puppeteer.launch({
   executablePath: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
   headless: 'new',

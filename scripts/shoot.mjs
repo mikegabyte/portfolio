@@ -2,7 +2,7 @@
 // so scroll-linked animations (timeline, bus, bg shift) can be verified.
 import puppeteer from 'puppeteer-core';
 
-const url = process.argv[2] ?? 'http://localhost:4322/vi/';
+const url = process.argv[2] ?? 'http://localhost:4322/';
 const browser = await puppeteer.launch({
   executablePath: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
   headless: 'new',

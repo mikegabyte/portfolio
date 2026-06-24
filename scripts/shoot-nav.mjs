@@ -8,7 +8,7 @@ const browser = await puppeteer.launch({
 });
 const page = await browser.newPage();
 await page.setViewport({ width: 1280, height: 900 });
-await page.goto('http://localhost:4322/vi/', { waitUntil: 'networkidle0' });
+await page.goto('http://localhost:4322/', { waitUntil: 'networkidle0' });
 await new Promise((r) => setTimeout(r, 800));
 
 // scroll to the bottom so --page-bg goes full sepia
@@ -28,11 +28,11 @@ const projectsBg = await page.evaluate(() => getComputedStyle(document.body).bac
 console.log('bg at homepage bottom:', sepiaBg, '→ bg on /vi/projects:', projectsBg);
 await page.screenshot({ path: '/tmp/nav-projects.png' });
 
-await page.goto('http://localhost:4322/vi/about/', { waitUntil: 'networkidle0' });
+await page.goto('http://localhost:4322/about/', { waitUntil: 'networkidle0' });
 await new Promise((r) => setTimeout(r, 1000));
 await page.screenshot({ path: '/tmp/nav-about.png' });
 
-await page.goto('http://localhost:4322/vi/blog/seo-audit-ai-deterministic-checks-and-streaming/', {
+await page.goto('http://localhost:4322/blog/seo-audit-ai-deterministic-checks-and-streaming/', {
   waitUntil: 'networkidle0',
 });
 await new Promise((r) => setTimeout(r, 800));
