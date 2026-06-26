@@ -11,3 +11,10 @@
 # Serve the agent-facing overview as markdown rather than text/plain.
 /llms.txt
   Content-Type: text/markdown; charset=utf-8
+
+/auth.md
+  Content-Type: text/markdown; charset=utf-8
+
+# Empty but valid API catalog (RFC 9727 / RFC 9264): this site exposes no APIs.
+/.well-known/api-catalog
+  Content-Type: application/linkset+json
