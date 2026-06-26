@@ -1,0 +1,13 @@
+# Cloudflare Workers static-assets headers.
+# https://developers.cloudflare.com/workers/static-assets/headers/
+
+# Web Linking (RFC 8288) — point agents at machine-readable resources.
+# describedby -> an llms.txt overview of the site (IANA-registered relation).
+# sitemap     -> the XML sitemap index.
+/*
+  Link: </llms.txt>; rel="describedby"; type="text/markdown"
+  Link: </sitemap-index.xml>; rel="sitemap"
+
+# Serve the agent-facing overview as markdown rather than text/plain.
+/llms.txt
+  Content-Type: text/markdown; charset=utf-8

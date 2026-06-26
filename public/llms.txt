@@ -1,0 +1,32 @@
+# Mikegabyte — Frontend Developer
+
+> Personal portfolio of Mikegabyte, a frontend developer working with Vue, React,
+> TypeScript and WordPress, focused on building web tools for marketing and content.
+> The site is bilingual (Vietnamese default, English available under /en/).
+
+## Pages
+
+- [Home](https://mikegabyte.com/): Intro and overview of what Mikegabyte builds.
+- [Projects](https://mikegabyte.com/projects): Featured work and side projects.
+- [The Tour (About)](https://mikegabyte.com/about): Background, approach, and journey.
+- [Blog](https://mikegabyte.com/blog): Build logs and technical write-ups.
+
+## Projects
+
+- SEO Audit AI (shipped): AI-scored on-page SEO reports streamed live to the UI. Stack: Vue 3, TypeScript, AI APIs, Node.js. https://github.com/mikegabyte/seo-audit-ai
+- PMS SaaS (in progress): Turning a property-management system for homestays into a multi-tenant SaaS. Stack: React, Refine, Node.js, MongoDB.
+- AI Push-up Counter (shipped): In-browser push-up counting via TensorFlow.js pose detection; offline-capable PWA. Stack: Vue 3, TypeScript, TensorFlow.js, PWA.
+- WP Marketing Toolkit: WordPress tooling for marketing and content workflows.
+
+## Blog posts
+
+- [Building a PMS SaaS, Part 1: from a dead client project to an owned product](https://mikegabyte.com/blog/building-a-pms-saas-part-1-the-decision)
+- [Building a PMS SaaS, Part 2: the security holes in my own POC](https://mikegabyte.com/blog/building-a-pms-saas-part-2-auditing-my-own-code)
+- [I built a push-up counter that runs entirely in your browser](https://mikegabyte.com/blog/building-a-pushup-counter-in-the-browser)
+- [SEO Audit AI: why I put a deterministic engine in front of the LLM](https://mikegabyte.com/blog/seo-audit-ai-deterministic-checks-and-streaming)
+
+## Resources
+
+- [CV (PDF)](https://mikegabyte.com/cv.pdf)
+- [GitHub](https://github.com/mikegabyte)
+- [Sitemap](https://mikegabyte.com/sitemap-index.xml)

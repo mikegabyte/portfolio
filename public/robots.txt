@@ -1,4 +1,10 @@
 User-agent: *
 Allow: /
 
+# Content Signals (https://contentsignals.org/) — how this content may be used.
+# ai-train: use for training AI/ML models
+# search: build a traditional search index
+# ai-input: use as live input to an AI system (e.g. RAG, agent grounding)
+Content-Signal: ai-train=yes, search=yes, ai-input=yes
+
 Sitemap: https://mikegabyte.com/sitemap-index.xml
