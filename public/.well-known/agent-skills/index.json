@@ -1,0 +1,12 @@
+{
+  "$schema": "https://schemas.agentskills.io/discovery/0.2.0/schema.json",
+  "skills": [
+    {
+      "name": "portfolio-overview",
+      "type": "skill-md",
+      "description": "Discover and read Mikegabyte's portfolio — pages, projects, blog posts, and CV — and learn the in-browser tools an agent can call on this site.",
+      "url": "https://mikegabyte.com/.well-known/agent-skills/portfolio-overview/SKILL.md",
+      "digest": "sha256:7745c034e3419a8520a6dd3eaaa3ae6ec22af16f435723d2766d351ac0dad849"
+    }
+  ]
+}

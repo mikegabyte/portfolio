@@ -2,6 +2,7 @@
 import '../styles/global.css';
 import { ClientRouter } from 'astro:transitions';
 import { t, localizePath, type Lang } from '../i18n/translations';
+import WebMCP from '../components/WebMCP.astro';
 
 interface Props {
   lang?: Lang;
@@ -257,5 +258,6 @@ const isActive = (href: string) =>
       document.addEventListener('astro:page-load', setupReveals);
       setupReveals();
     </script>
+    <WebMCP />
   </body>
 </html>

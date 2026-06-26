@@ -1,0 +1,88 @@
+---
+// WebMCP (https://webmachinelearning.github.io/webmcp/) — expose real site
+// actions to in-browser AI agents via navigator.modelContext.registerTool().
+// Every tool below performs a genuine action; nothing here is a stub.
+import { getCollection } from 'astro:content';
+import { projects } from '../data/projects';
+
+const posts = (await getCollection('blog'))
+  .filter((p) => p.id.startsWith('en/') && !p.data.draft)
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+const projectData = projects.map((p) => ({
+  title: p.title,
+  description: p.description.en,
+  stack: p.stack,
+  status: p.status,
+  link: p.link ?? null,
+}));
+
+const postData = posts.map((p) => ({
+  title: p.data.title,
+  url: `/blog/${p.id.replace(/^en\//, '')}`,
+  date: p.data.date.toISOString().slice(0, 10),
+}));
+---
+
+<script define:vars={{ projectData, postData }}>
+  (function () {
+    const ctx = navigator.modelContext;
+    if (!ctx || typeof ctx.registerTool !== 'function') return;
+    if (window.__webmcpRegistered) return;
+    window.__webmcpRegistered = true;
+
+    const text = (value) => ({
+      content: [{ type: 'text', text: typeof value === 'string' ? value : JSON.stringify(value, null, 2) }],
+    });
+    const register = (def) => {
+      try {
+        ctx.registerTool(def);
+      } catch (_) {
+        /* a tool name may already be registered; ignore */
+      }
+    };
+
+    register({
+      name: 'list_projects',
+      description: "List Mikegabyte's portfolio projects with description, tech stack, status, and link.",
+      inputSchema: { type: 'object', properties: {} },
+      execute: async () => text(projectData),
+    });
+
+    register({
+      name: 'list_blog_posts',
+      description: 'List the blog posts on this site with title, URL, and publish date.',
+      inputSchema: { type: 'object', properties: {} },
+      execute: async () => text(postData),
+    });
+
+    register({
+      name: 'get_cv',
+      description: "Get the URL to Mikegabyte's CV (PDF).",
+      inputSchema: { type: 'object', properties: {} },
+      execute: async () => text(new URL('/cv.pdf', location.origin).href),
+    });
+
+    register({
+      name: 'navigate',
+      description: 'Open a top-level page of this site in the browser.',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          page: {
+            type: 'string',
+            enum: ['home', 'projects', 'about', 'blog'],
+            description: 'Which page to open.',
+          },
+        },
+        required: ['page'],
+      },
+      execute: async (input) => {
+        const map = { home: '/', projects: '/projects', about: '/about', blog: '/blog' };
+        const path = map[input && input.page] || '/';
+        location.href = path;
+        return text('Navigating to ' + path);
+      },
+    });
+  })();
+</script>
