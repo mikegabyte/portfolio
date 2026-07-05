@@ -7,25 +7,25 @@ import sitemap from '@astrojs/sitemap';
 // https://astro.build/config
 export default defineConfig({
   site: 'https://mikegabyte.com',
-  // Old URLs: Vietnamese used to live under /vi/ before it became the default locale
+  // Old URLs: English used to live under /en/ before it became the default locale
   redirects: {
-    '/vi': '/',
-    '/vi/about': '/about',
-    '/vi/projects': '/projects',
-    '/vi/blog': '/blog',
-    '/vi/blog/[...slug]': '/blog/[...slug]',
+    '/en': '/',
+    '/en/about': '/about',
+    '/en/projects': '/projects',
+    '/en/blog': '/blog',
+    '/en/blog/[...slug]': '/blog/[...slug]',
   },
   integrations: [
     sitemap({
       i18n: {
-        defaultLocale: 'vi',
+        defaultLocale: 'en',
         locales: { en: 'en', vi: 'vi' },
       },
     }),
   ],
   i18n: {
-    defaultLocale: 'vi',
-    locales: ['vi', 'en'],
+    defaultLocale: 'en',
+    locales: ['en', 'vi'],
     routing: {
       prefixDefaultLocale: false,
     },

@@ -2,9 +2,9 @@ export type Lang = 'en' | 'vi';
 
 export const langs: Lang[] = ['en', 'vi'];
 
-/** Prefix a root-relative path for the given language. Vietnamese is the default locale at the root. */
+/** Prefix a root-relative path for the given language. English is the default locale at the root. */
 export function localizePath(lang: Lang, path: string): string {
-  return lang === 'en' ? (path === '/' ? '/en/' : `/en${path}`) : path;
+  return lang === 'vi' ? (path === '/' ? '/vi/' : `/vi${path}`) : path;
 }
 
 export const t = {

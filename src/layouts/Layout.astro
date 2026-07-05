@@ -10,15 +10,15 @@ interface Props {
   description?: string;
 }
 
-const { lang = 'vi', title, description } = Astro.props;
+const { lang = 'en', title, description } = Astro.props;
 const tt = t[lang];
 const pageTitle = title ?? tt.meta.title;
 const pageDescription = description ?? tt.meta.description;
 
 const current = Astro.url.pathname;
-// Path of this page in the other language
-const viPath = current.replace(/^\/en(\/|$)/, '/') || '/';
-const enPath = localizePath('en', viPath);
+// Path of this page in the default (English) locale, then its Vietnamese variant
+const enPath = current.replace(/^\/vi(\/|$)/, '/') || '/';
+const viPath = localizePath('vi', enPath);
 
 // Absolute URLs — hreflang/canonical/og must not be relative
 const site = Astro.site!;
@@ -47,7 +47,7 @@ const nav = [
 const isActive = (href: string) =>
   current === href ||
   current === href + '/' ||
-  (href !== '/' && href !== '/en/' && current.startsWith(href));
+  (href !== '/' && href !== '/vi/' && current.startsWith(href));
 ---
 
 <!doctype html>
@@ -79,7 +79,7 @@ const isActive = (href: string) =>
     <meta name="twitter:image" content={ogImage} />
     <link rel="alternate" hreflang="en" href={enURL} />
     <link rel="alternate" hreflang="vi" href={viURL} />
-    <link rel="alternate" hreflang="x-default" href={viURL} />
+    <link rel="alternate" hreflang="x-default" href={enURL} />
     <script type="application/ld+json" set:html={personLd} />
     <ClientRouter />
     <script is:inline>
@@ -87,20 +87,20 @@ const isActive = (href: string) =>
       document.documentElement.classList.add('js');
     </script>
     <script is:inline>
-      // First visit only: visitors whose browser does NOT speak Vietnamese get /en/.
+      // First visit only: visitors whose browser speaks Vietnamese get /vi/.
       // An explicit choice via the lang switcher is stored and always wins.
       (function () {
         var KEY = 'pref-lang';
         var path = location.pathname;
-        var onEn = path === '/en' || path.indexOf('/en/') === 0;
+        var onVi = path === '/vi' || path.indexOf('/vi/') === 0;
         if (localStorage.getItem(KEY)) return;
         var prefs = navigator.languages || [navigator.language || ''];
         var wantsVi = prefs.some(function (l) {
           return l && l.toLowerCase().indexOf('vi') === 0;
         });
         localStorage.setItem(KEY, wantsVi ? 'vi' : 'en');
-        if (!wantsVi && !onEn) {
-          location.replace('/en' + (path === '/' ? '/' : path));
+        if (wantsVi && !onVi) {
+          location.replace('/vi' + (path === '/' ? '/' : path));
         }
       })();
     </script>
