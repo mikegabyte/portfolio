@@ -11,6 +11,17 @@ export interface Project {
 
 export const projects: Project[] = [
   {
+    title: 'Casaly',
+    description: {
+      en: 'A multi-tenant property-management SaaS for homestays: bookings, channel/calendar sync, and Vietnam-style billing. Build log on the blog — security audit included.',
+      vi: 'SaaS quản lý lưu trú multi-tenant cho homestay: đặt phòng, đồng bộ lịch/kênh bán, thanh toán kiểu Việt Nam. Build log trên blog — kèm cả phần tự audit security.',
+    },
+    stack: ['React', 'Refine', 'Node.js', 'MongoDB'],
+    status: 'shipped',
+    link: 'https://casaly.vn',
+    featured: true,
+  },
+  {
     title: 'SEO Audit AI',
     description: {
       en: 'Paste a URL, get an AI-scored on-page SEO report — title, meta, heading structure, readability — with concrete fixes, streamed live to the UI.',
@@ -19,16 +30,6 @@ export const projects: Project[] = [
     stack: ['Vue 3', 'TypeScript', 'AI APIs', 'Node.js'],
     status: 'shipped',
     link: 'https://github.com/mikegabyte/seo-audit-ai',
-    featured: true,
-  },
-  {
-    title: 'PMS SaaS',
-    description: {
-      en: 'Turning a working property-management system for homestays into a multi-tenant SaaS: bookings, channel/calendar sync, and Vietnam-style billing. Build log on the blog — security audit included.',
-      vi: 'Biến một hệ thống quản lý lưu trú cho homestay đang chạy thành SaaS multi-tenant: đặt phòng, đồng bộ lịch/kênh bán, thanh toán kiểu Việt Nam. Build log trên blog — kèm cả phần tự audit security.',
-    },
-    stack: ['React', 'Refine', 'Node.js', 'MongoDB'],
-    status: 'in-progress',
     featured: true,
   },
   {
