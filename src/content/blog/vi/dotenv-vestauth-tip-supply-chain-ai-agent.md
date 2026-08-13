@@ -96,14 +96,16 @@ Chính `SKILL.md` của `dotenv` viết:
 
 Lời khuyên đúng. Nhưng bản thân package lại không áp dụng nguyên tắc đó cho chính console output của mình. Nếu `.env` là untrusted input, thì log của một process cũng vậy: bất kỳ dependency nào cũng có thể in ra bất kỳ thứ gì, và nếu quy trình của bạn, dù là người hay AI agent, mặc định tin log là trung lập, đó là một điểm mù.
 
-## Kết luận, không lấp lửng
+## Kết luận
 
 Đây không phải một vụ tấn công. Không cần vá gấp, không cần xoay vòng secret, không cần dựng lại pipeline CI. Chuyện đơn giản hơn nhiều: một maintainer nổi tiếng đã dùng chính console output của package hạ tầng để quảng cáo cho sản phẩm khác của mình, rồi bốn tháng sau tự nhận ra và gỡ bỏ.
 
-Nhưng có ba việc cụ thể mình sẽ làm ngay, không phải lời khuyên chung chung để đó:
+Mình cũng không phải người đầu tiên để ý chuyện này. Trên GitHub, [issue #1020](https://github.com/motdotla/dotenv/issues/1020) mở từ tháng 5/2026 đã phàn nàn log nghe cứ như có ai đó chèn thêm env từ một nguồn khác. [Issue #1036](https://github.com/motdotla/dotenv/issues/1036) còn rõ hơn: người mở issue viết thẳng "Claude Code is complaining about this every time as a security issue", tức là Claude Code, trong một phiên làm việc của người khác, cũng từng gắn cờ đúng hai dòng tip này là vấn đề bảo mật. Maintainer trả lời sẽ gỡ hết tips ở bản kế tiếp, đúng là commit `0952f8d` mình tìm được ở trên, nhưng vẫn tranh thủ chèn thêm một câu quảng cáo cho `dotenvx` ngay trong phần trả lời. [Toàn bộ mảng TIPS gốc vẫn xem được ở đây](https://github.com/motdotla/dotenv/blob/af05aa05b4486930dc845402eecb9b7c42a8059f/lib/main.js#L7-L17).
 
-1. Bump `dotenv` lên bản sau ngày 14/07/2026 trong `pms-mern/backend`. Đóng hẳn issue này thay vì để nó nằm đó chờ lần sau lại giật mình vì cùng một dòng.
-2. Thêm một bước vào quy trình review dependency của mình: khi một package thay đổi version, đọc CHANGELOG hoặc diff thật, không chỉ chạy `npm update` rồi tin tưởng semver.
-3. Không coi output của process là trung lập nữa, dù tự mình đọc hay để AI agent đọc thay. Một dòng log từ một dependency phổ biến vẫn là nội dung do bên thứ ba viết ra, y hệt một giá trị trong `.env`.
+Những điều mình nên làm ngay:
 
-Chưa có ai xây sẵn công cụ cho việc dependency in nội dung nhắm vào AI agent, đó là sự thật. Nhưng phần việc của mình không phải là chờ ai xây công cụ đó. Phần việc của mình là thêm bước xác minh thủ công này vào quy trình ngay từ bây giờ, cho tới khi có công cụ làm chuyện đó tự động.
+1. Bump `dotenv` lên bản sau ngày 14/07/2026 trong `pms-mern/backend`.
+2. Đọc CHANGELOG hoặc diff thật mỗi khi một dependency đổi version, thay vì chạy `npm update` rồi tin luôn vào semver.
+3. Tự tay kiểm tra log và output quan trọng, đừng chỉ dựa vào AI agent đọc thay rồi báo cáo lại.
+
+AI agent hiện tại vẫn còn khá mới, và còn rất nhiều khoảng trống cho kiểu prompt injection này len vào, từ log, từ file cấu hình, từ bất kỳ thứ gì agent có quyền đọc. Lần này nội dung không độc hại, chỉ là một dòng quảng cáo khó chịu. Nhưng nếu một ngày dòng tip đó không trỏ tới trang quảng cáo, mà là một chỉ thị thật nhắm vào chính agent đang đọc log thay bạn thì sao? Tin AI quá mức, kể cả khi nó có vẻ đáng tin, không phải một thói quen tốt. Cẩn thận với từng dependency mình đưa vào source, đọc kỹ những gì nó thật sự in ra, và đừng để việc xác minh trở thành thứ mình mặc định nghĩ "chắc AI lo rồi".

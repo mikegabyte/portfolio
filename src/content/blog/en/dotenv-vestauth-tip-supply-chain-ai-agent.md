@@ -96,14 +96,16 @@ The `dotenv` `SKILL.md` itself states:
 
 Good advice. But the package doesn't apply that same principle to its own console output. If `.env` counts as untrusted input, so does the log of any process: any dependency can print anything it wants, and if your workflow, whether run by a human or an AI agent, treats logs as neutral by default, that's a blind spot.
 
-## A real conclusion, not a shrug
+## Conclusion
 
 This wasn't an attack. No urgent patch, no secret rotation, no rebuilding a CI pipeline. It's simpler than that: a well known maintainer used the console output of an infrastructure package to advertise another product of his, then walked it back himself four months later.
 
-But there are three concrete things I'm doing now, not vague advice to file away:
+I also wasn't the first person to notice. On GitHub, [issue #1020](https://github.com/motdotla/dotenv/issues/1020), opened in May 2026, already complained that the logs sounded like something was injecting env values from another source. [Issue #1036](https://github.com/motdotla/dotenv/issues/1036) is more direct: the person who opened it wrote plainly, "Claude Code is complaining about this every time as a security issue," meaning Claude Code itself, in someone else's session, had already flagged these exact two tip lines as a security concern. The maintainer replied that the next release would drop the tips entirely, which is commit `0952f8d`, the one I found above, while still working in a plug for `dotenvx` inside that same reply. [The full original TIPS array is still visible here](https://github.com/motdotla/dotenv/blob/af05aa05b4486930dc845402eecb9b7c42a8059f/lib/main.js#L7-L17).
 
-1. Bump `dotenv` past the July 14, 2026 release in `pms-mern/backend`. Close this out instead of letting it sit there waiting to startle me again the next time I read a log.
-2. Add a step to how I review dependency updates: when a package bumps a version, read the actual CHANGELOG or diff, not just run `npm update` and trust semver.
-3. Stop treating process output as neutral, whether I'm reading it myself or letting an AI agent read it for me. A log line from a popular dependency is still third party content, exactly like a value inside `.env`.
+Things I'm doing starting now:
 
-Nobody has built tooling for the fact that a dependency can print content aimed at an AI agent. That part is true. But my job isn't to wait for someone to build that tooling. It's to add this manual check to my process starting now, until something does it automatically.
+1. Bump `dotenv` past the July 14, 2026 release in `pms-mern/backend`.
+2. Read the actual CHANGELOG or diff whenever a dependency bumps version, instead of running `npm update` and trusting semver.
+3. Check important logs and output myself, instead of only relying on an AI agent to read them and report back.
+
+AI agents are still fairly new, and there's a lot of room for this kind of prompt injection to slip in, through logs, through config files, through anything an agent happens to be allowed to read. This time the content wasn't malicious, just an annoying ad. But what if the next tip line didn't point to a promo page, and instead carried a real instruction aimed at whatever agent is reading the log on your behalf? Trusting AI too much, even when it looks trustworthy, isn't a good habit. Be careful with every dependency you bring into your source, read what it actually prints, and don't let verification become something you assume the AI already handled.
